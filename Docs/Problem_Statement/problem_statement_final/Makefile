@@ -22,8 +22,6 @@ $(TRG): %.dvi: %.tex $(EXAMPLES)
 
 	$(LATEX) $<
 	#$(BIBTEX) $(<:%.tex=%)
-	$(LATEX) $<
-	$(LATEX) $<
 	#remove the pygmentized output to avoid cluttering up the directory
 	#rm __${SRC}.tex
 

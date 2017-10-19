@@ -1,0 +1,5 @@
+#Ignore PDF's
+*.pdf
+
+#Ignore Appledoubles
+*.Appledouble
