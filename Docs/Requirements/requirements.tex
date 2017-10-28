@@ -1,5 +1,6 @@
 \documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
 \usepackage{listings}
+\usepackage{pgfgantt}
 \usepackage{underscore}
 \usepackage[bookmarks=true]{hyperref}
 \usepackage[utf8]{inputenc}
@@ -20,14 +21,15 @@
 }%
 \urlstyle{same}
 \def\myversion{ 1.0 }
+\def\class{CS 461 - CS Senior Capstone}
+\def\term{Fall 2017}
 \date{}
 
 \usepackage{hyperref}
 \title{AHS Micro-Air Vehicle Challenge}
-\author{ Project Sponsored By: \\
-    Nancy Squires Ph.D.
+\author{ Instructor: Kevin McGrath, Kirsten Winters \\
+    Project Sponsor: Nancy Squires, Ph.D.
 }
-
 \begin{document}
 \null  % Empty line
 \nointerlineskip  % No skip for prev line
@@ -36,20 +38,21 @@
 \let\newpage \relax
 \maketitle
 \begin{center}
+\class\\
+\term\\
 \huge{Requirements Document}\par
 \vspace{2mm}
 \large{Written by:}\par
-\normalsize{Kaiyuan Fan}\par
-\normalsize{Yingshi Huang}\par
-\normalsize{Justin Sherburne}\par
+\normalsize{Kaiyuan Fan, Yingshi Huang, Justin Sherburne}\par
 \vspace{8mm}
 \large{\textbf{Abstract:}}\par 
+\end{center}
 \vspace{2mm}
 \normalsize{
 This document is intended to define project specifications and requirements. It contains a statement of what requirements need to be met for MAV challenge, how the aircraft works, and technologies and software are used to operate the control board. This document will also include proposed solutions for various challenges, as well as project constraints. It is intended for project sponsors, collaborators, or as a resource to future projects of a similar nature.
 
 }
-\end{center}
+
 \let \newpage \snewpage
 \vfill 
 \break % page break
@@ -80,7 +83,7 @@ The Micro-Air Vehicle challenge is a competition hosted by the American Helicopt
 The purpose of this project is to create a Micro-Air vehicle capable of autonomous navigation. This specific functionality has been replicated on large-scale aircraft, but remains challenging for small-scale applications. The difficulty lies within creating a system that is powerful enough to handle the low-latency calculations required to modify flight trajectories, but light enough to fit onto a vehicle under 500 grams. Applications for this technology could span from package delivery systems to various emergency response and military applications. Similar projects have been undertaken at DARPA \cite{r1} and other universities across the united states.
 
 \subsection{Project Scope}
-This project intends to create a Micro-Air Vehicle capable of competing in the AHS Micro-Air Vehicle challenge. This means that the vehicle is required to have an emergency shutdown function, and a manual flight overrides. Additionally the vehicle should satisfy the competition requirements regarding weight and size, however those considerations will largely be determined by the mechanical engineering team attached to this project.
+This project intends to create a Micro-Air Vehicle capable of competing in the AHS Micro-Air Vehicle challenge.\cite{r2} This means that the vehicle is required to have an emergency shutdown function, and a manual flight overrides. Additionally the vehicle should satisfy the competition requirements regarding weight and size, however those considerations will largely be determined by the mechanical engineering team attached to this project.
  \\ \\
 This project focuses on an autonomous functionality capable of identifying objects that are important to the competition parameters, and be able to interact with those objects accordingly. This autonomous functionality should be able to sustain autonomous flight for 5 minutes without crashing into any non-moving obstacles.
 \\ \\
@@ -147,7 +150,7 @@ Users will not be required to set-up any portion of the communication or flight 
 
 \subsection{Design and Implementation Constraints}
 
-The Micro-Air vehicle is subject to the following constraints based off of previous years competition rules. These constraints will be updated according to the current year’s competition once rules are announced
+The Micro-Air vehicle is subject to the following constraints based off of previous years competition rules.\cite{r2} These constraints will be updated according to the current year’s competition once rules are announced
 \begin{enumerate}
 \item The vehicle must weigh less than 500 grams including the battery.
 \item The vehicle must be shorter than 17.7 inches in any one dimension. 
@@ -226,6 +229,26 @@ The Micro-Air vehicle is subject to the following constraints based off of previ
 
 
 \end{enumerate}
+\subsection{Possible schedule}
+\vspace{2mm}
+\begin{ganttchart}{1}{24pt}
+  %title
+  \gantttitle{2017 - 2018}{24}\\
+  \gantttitle{Oct}{3} 
+  \gantttitle{Nov}{3} 
+  \gantttitle{Dec-2016}{3} 
+  \gantttitle{Jan-2017}{3} 
+  \gantttitle{Feb}{3} 
+  \gantttitle{March}{3} 
+  \gantttitle{April}{3}
+  \gantttitle{May}{3} \\
+  %tasks
+  \ganttbar{Paper Submission- Design proposal}{2}{12} \\
+  \ganttlinkedbar{Team Design and Develope time}{13}{16} \\
+  \ganttlinkedbar{Final Selection}{17}{18}\\
+  \ganttlinkedbar{Final Design, Travel, Transpotation}{19}{23}
+\end{ganttchart}
+
 
 \end{document}
 
