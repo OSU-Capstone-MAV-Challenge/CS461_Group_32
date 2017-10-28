@@ -1,0 +1,231 @@
+\documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    %bookmarks=false,    % show bookmarks bar?
+    pdftitle={MAV Competition Software Requirements},    % title
+    pdfauthor={Kaiyuan Fan, Yingshi Huang, Justin Sherburne },% author
+    pdfkeywords={requirements documents, Capstone, MAV, AHS}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=blue,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\urlstyle{same}
+\def\myversion{ 1.0 }
+\date{}
+
+\usepackage{hyperref}
+\title{AHS Micro-Air Vehicle Challenge}
+\author{ Project Sponsored By: \\
+    Nancy Squires Ph.D.
+}
+
+\begin{document}
+\null  % Empty line
+\nointerlineskip  % No skip for prev line
+\vfill
+\let\snewpage \newpage
+\let\newpage \relax
+\maketitle
+\begin{center}
+\huge{Requirements Document}\par
+\vspace{2mm}
+\large{Written by:}\par
+\normalsize{Kaiyuan Fan}\par
+\normalsize{Yingshi Huang}\par
+\normalsize{Justin Sherburne}\par
+\vspace{8mm}
+\large{\textbf{Abstract:}}\par 
+\vspace{2mm}
+\normalsize{
+This document is intended to define project specifications and requirements. It contains a statement of what requirements need to be met for MAV challenge, how the aircraft works, and technologies and software are used to operate the control board. This document will also include proposed solutions for various challenges, as well as project constraints. It is intended for project sponsors, collaborators, or as a resource to future projects of a similar nature.
+
+}
+\end{center}
+\let \newpage \snewpage
+\vfill 
+\break % page break
+
+\tableofcontents
+
+
+\section*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+	    Name & Date & Reason For Changes & Version\\
+        \hline
+	    Project Requirements & Oct 25 & Initial Creation & 1.0\\
+        \hline
+    \end{tabular}
+\end{center}
+
+\section{Introduction}
+
+Micro-Air Vehicle Competition Version 1.0
+
+The Micro-Air Vehicle challenge is a competition hosted by the American Helicopter Society International. As potential participants in this competition, it is our task to design and build an aircraft capable of competing in the AHS event in May.
+
+\subsection{Purpose}
+
+The purpose of this project is to create a Micro-Air vehicle capable of autonomous navigation. This specific functionality has been replicated on large-scale aircraft, but remains challenging for small-scale applications. The difficulty lies within creating a system that is powerful enough to handle the low-latency calculations required to modify flight trajectories, but light enough to fit onto a vehicle under 500 grams. Applications for this technology could span from package delivery systems to various emergency response and military applications. Similar projects have been undertaken at DARPA \cite{r1} and other universities across the united states.
+
+\subsection{Project Scope}
+This project intends to create a Micro-Air Vehicle capable of competing in the AHS Micro-Air Vehicle challenge. This means that the vehicle is required to have an emergency shutdown function, and a manual flight overrides. Additionally the vehicle should satisfy the competition requirements regarding weight and size, however those considerations will largely be determined by the mechanical engineering team attached to this project.
+ \\ \\
+This project focuses on an autonomous functionality capable of identifying objects that are important to the competition parameters, and be able to interact with those objects accordingly. This autonomous functionality should be able to sustain autonomous flight for 5 minutes without crashing into any non-moving obstacles.
+\\ \\
+This project is not intended to create a vehicle capable of navigating outside of the competition parameters, and should not be required to avoid any moving obstacles.
+\\ \\
+Vehicle requirements will be dependant on competition goals and requirements, and those requirements are subject to change. The success of the project is not dependant on the qualification to compete or performance during the competition, but it is dependant upon the completion and testing of the autonomous functionalities of the vehicle created during this project.
+
+
+\subsection{Definitions, Acronyms, and Abbreviations}
+
+\underline{\textbf{Definitions}}
+\begin{enumerate}
+\item \textbf{MAV: } Micro-Air Vehicle
+\item \textbf{AHS: } American Helicopter Society
+\item \textbf{OpenCV: } Open source Computer Vision
+\item \textbf{DARPA: } Defense Advanced Research Projects Agency
+\item \textbf{GUI: } Graphical User Interface
+
+\end{enumerate}
+
+
+\subsection{References}
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+
+\section{Overall Description}
+
+\subsection{Product Perspective}
+\indent The Micro-Air Vehicle Challenge project was sponsored by Nancy Squires Ph.D. This collaborative project was created for the mechanical, electrical, and computer science senior capstone courses with the intention of creating a vehicle capable of competing in the AHS annual Micro-Air Vehicle challenge. 
+
+\subsection{Product Functions}
+\begin{itemize} 
+
+\item Able to maintain stable flight for a duration for at least 5 minutes.
+
+\item Able to perform takeoff, hover, and land both manually and autonomously.
+
+\item Able to stop when the user triggers the KillSwitch function.
+ 
+\item Able to transmit video and sensor data back to a base-station (laptop).
+ 
+\item Able to distinguish between objectives and obstacles while in flight. 
+
+\item Able to detect and avoid non-moving obstacles.
+
+\item Able to pick up and drop off specified objects autonomously.
+\end{itemize}
+
+
+
+\subsection{User Characteristics}
+
+We are working under the assumption that all users will have the following characteristics:
+\begin{itemize}
+    \item Ability to read and understand English
+    \item Ability to use remote controller to manual flight. 
+    \item Familiarity with autonomous navigation requirements and interface.
+    \item Access to any graphical interface associated with the project and familiarity with the functions associated with the interface
+\end{itemize}
+
+Users will not be required to set-up any portion of the communication or flight system, however some initialization steps may be required from a trained operator. 
+
+
+\subsection{Design and Implementation Constraints}
+
+The Micro-Air vehicle is subject to the following constraints based off of previous years competition rules. These constraints will be updated according to the current year’s competition once rules are announced
+\begin{enumerate}
+\item The vehicle must weigh less than 500 grams including the battery.
+\item The vehicle must be shorter than 17.7 inches in any one dimension. 
+\item The vehicle is required to operate from an electric power source.
+\item It must be able to take off and land vertically, and have the ability to maintain a stable altitude (hover).
+\item It must have some sort of on-board camera system featuring at least one camera.
+\item It must use standard communication methods, with a preference on 2.4GHz communications.
+\item It must have an emergency cutoff switch that will power off the vehicles motors in case of a loss of communication.
+\item It must also have a manual control override so an operator can steer the vehicle back to the competition area. 
+\end{enumerate}
+
+
+
+
+%\subsection{Assumptions and Dependencies}
+
+
+
+
+\section{Specific Requirements}
+\subsection{Camera System}
+\begin{enumerate}
+\item The cameras should be able to provide video to a remote station. 
+
+\item The remote station should be able to process the information from those camera’s and send instructions to the vehicle. 
+
+\item Object recognition can be handled either by the vehicle or by the remote station.
+
+\end{enumerate}
+\subsection{Control System}
+\begin{enumerate}
+\item Manual control should be facilitated through a Microsoft Xbox controller. 
+
+\item Autonomous functions should be enabled through a GUI, and should display whether or not it is currently in an autonomous or manual flight mode. 
+
+\item The kill switch should override either manual or autonomous flight.
+
+
+\end{enumerate}
+\subsection{Communication System}
+\begin{enumerate}
+\item Must be able to maintain a WiFi connection capable of streaming at minimum: 2 videos at 720p 30fps. This is equivalent to roughly 15Mb/s.
+
+\item Must be able to maintain communication at a distance of 40 ft.
+
+\item In the event of a loss of communication the vehicle will attempt to reconnect for 4 seconds, and then initiate the kill-switch command.
+
+
+\end{enumerate}
+\subsection{Autonomous System}
+\begin{enumerate}
+\item The vehicle should be able to discern what is a target, what is an obstacle, and what is a boundary.
+\item Using distance sensors or camera information the vehicle should be able to stay within the competition area without running into an obstacle. 
+\item Using distance sensors or camera information the vehicle should be able to locate and pick up an object specified by competition rules.
+\item Using distance sensors or camera information the vehicle should be able to drop off the same object at a specified location
+
+
+\end{enumerate}
+\subsection{Hardware Specifications}
+\begin{enumerate}
+\item Hardware must be small enough to fit within the size/weight constraints specified by the competition rules. 
+\item Hardware must be able to be powered by the on-board power system designed by the electrical engineering team. 
+\item The hardware must be capable of transmitting data over a 2.4 GHz system. 
+
+
+\end{enumerate}
+\subsection{Software Specifications}
+\begin{enumerate}
+\item The software should be capable of processing images and relay corresponding responses in less than 500ms + communication latency.
+
+\item The software should be capable of translating manual flight commands to motor controller outputs in less than 100ms + communication latency.
+
+\item The software should be able to display two video outputs to a GUI interface at the base station. The video output at the base station should be delayed no less than 200ms + communication latency. 
+
+\item The software systems should utilize open source libraries if they are available to minimize the amount of proprietary code implemented in this project. For example OpenCV is an open source library used to translate video imagery to usable information for autonomous system.
+
+
+\end{enumerate}
+
+\end{document}
+
