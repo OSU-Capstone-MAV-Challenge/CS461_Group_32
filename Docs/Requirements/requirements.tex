@@ -223,15 +223,16 @@ The Micro-Air vehicle is subject to the following constraints based off of previ
 
 \item The software should be capable of translating manual flight commands to motor controller outputs in less than 100ms + communication latency.
 
-\item The software should be able to display two video outputs to a GUI interface at the base station. The video output at the base station should be delayed no less than 200ms + communication latency. 
+\item The software should be able to display two video outputs to a GUI interface at the base station. The video output at the base station should be delayed no less than 500ms + communication latency. 
 
 \item The software systems should utilize open source libraries if they are available to minimize the amount of proprietary code implemented in this project. For example OpenCV is an open source library used to translate video imagery to usable information for autonomous system.
 
 
 \end{enumerate}
-\subsection{Possible schedule}
+\subsection{Gantt Chart}
 \vspace{2mm}
-\begin{ganttchart}{1}{24}
+\begin{ganttchart}[vgrid={draw=none, dotted}]{1}{24}
+  vgrid={{black, dotted}}
   %title
   \gantttitle{2017 - 2018}{24}\\
   \gantttitle{Oct}{3} 
@@ -244,9 +245,9 @@ The Micro-Air vehicle is subject to the following constraints based off of previ
   \gantttitle{May}{3} \\
   %tasks
   \ganttbar{Paper Submission- Design proposal}{2}{12} \\
-  \ganttlinkedbar{Team Design and Develope time}{13}{16} \\
-  \ganttlinkedbar{Final Selection}{17}{18}\\
-  \ganttlinkedbar{Final Design, Travel, Transpotation}{19}{23}
+  \ganttlinkedbar{Team Design and Development}{13}{16} \\
+  \ganttlinkedbar{Competition Final Selection}{17}{18}\\
+  \ganttlinkedbar{Final Design, Travel,and Transportation}{19}{23}
 \end{ganttchart}
 
 
