@@ -1,0 +1,427 @@
+\documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{hyperref} 
+\hypersetup{
+    %bookmarks=false,    % show bookmarks bar?
+    pdftitle={MAV Competition Software Requirements},    % title
+    pdfauthor={Kaiyuan Fan, Yingshi Huang, Justin Sherburne },% author
+    pdfkeywords={requirements documents, Capstone, MAV, AHS}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=blue,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\urlstyle{same}
+\def\myversion{ 1.0 }
+\def\class{CS 461 - CS Senior Capstone}
+\def\term{Fall 2017}
+\date{11/12/2017}
+
+\usepackage{hyperref}
+
+\title{AHS Micro-Air Vehicle Challenge}
+\author{ Instructor: Kevin McGrath, Kirsten Winters \\
+    Project Sponsor: Nancy Squires, Ph.D.}
+\begin{document}
+\null  % Empty line
+\nointerlineskip  % No skip for prev line
+\vfill
+\let\snewpage \newpage
+\let\newpage \relax
+\maketitle
+\begin{center}
+\class\\
+\term\\
+\huge{Technology Review}\par
+\vspace{2mm}
+\large{Written by:}\par
+\normalsize{Justin Sherburne}\par
+\normalsize{Group 32: CS Team Lead} \par
+\vspace{8mm}
+\end{center}
+
+% \large{\textbf{Abstract:}}\par 
+% \vspace{2mm}
+% \normalsize{ 
+% }
+
+\let \newpage \snewpage
+\vfill 
+\break % page break
+
+\tableofcontents
+
+
+\section*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+	    Name & Date & Reason For Changes & Version\\
+        \hline
+	    Technology Review & Nov 12 & Initial Creation & 1.0\\
+        \hline
+    \end{tabular}
+\end{center}
+
+
+
+\section{Hardware Controllers}
+
+\subsection{Overview}
+
+We were asked by the Electrical and Mechanical teams for this 
+project to decide what hardware we would require on-board of our 
+Micro-Air Vehicle. This is going to be the brains that directly 
+interfaces with the motors. At minimum it should be able to 
+translate manual commands into usable flight instructions for the 
+vehicle. At most this hardware should be able to handle video and 
+data streaming from a base station while maintaining a stable 
+flight path. 
+
+\subsection{Criteria}
+\begin{enumerate}
+\item{The controller should  be smaller than half of our maximum 
+allowed dimension. This means it should be shorter than 8.85 inches 
+in any dimension. However, smaller boards should be given 
+preference in order to reduce our footprint on the overall design.}
+
+\item{The controller should not use an excessive amount of power, 
+and should not require an external power adaptor. }
+
+\item{The controller should have a port to attach to a camera. This 
+can be USB, PCIe, CSI, I/O pins, ect.}
+
+\item{The controller should have I/O pins capable of both 
+transmitting and receiving electrical signals}
+
+\item{The controller should be capable of maintaining a stable 
+wireless connection via either built-in hardware or using an 
+additional adaptor.}
+\end{enumerate}
+
+\subsection{Potential Choices}
+
+My initial research led me to two very similar options: The 
+Raspberry Pi, and the OpenRex. For a third option I am including 
+the Arduino platform due to its versatility. Another possible third 
+option I was considering was the Nvidia Jetson TX1. However, the 
+Nvidia was the largest of the three options, and also required the 
+most amount of power. 
+
+\subsubsection{Arduino}
+
+
+The Arduino platform\cite{r1} is unique in the fact that it can be 
+customized for most applications you could use a Pi or OpenRex on. 
+Adding additional modules called shields to the base Arduino can 
+give it wireless capabilities as well as USB and camera input 
+options. Additionally, the MKR ZERO is a similar size to the PiZero 
+which makes it ideal for our application. Power is supplied via a 
+micro-usb input, and runs on less than 2A. Additional boards may 
+require separate power, however they can be powered in parallel 
+with micro-usb adaptors with the same power supply. I/O pins would 
+need to be utilized for additional shields added to the Arduino, 
+however a specific shield could also be used for motor control. The 
+Arduino has a micro-controller rather than a processor, meaning 
+that it cannot support a true OS, and will generally be inferior at 
+complex tasks. 
+
+
+%https://store.arduino.cc/arduino-mkrzero
+
+\subsubsection{Raspberry Pi Model 3}
+
+The Raspberry Pi is one of the most commonly used controller boards 
+because it is capable of running a full OS like Raspbian. It's 
+power works identically to the Arduino platform, being supplied via 
+micro-usb. In addition to being able to support an OS, the Pi also 
+comes with additional ports built into the board. The CSI port is 
+capable of handling a video feed from a camera, and USB ports can 
+also accept camera inputs. There are two versions of the Pi that 
+are suitable for our project; the Pi model 3 \cite{r2}, and 
+the Pi Zero W \cite{r3}. The Pi Zero is a smaller version of the 3, 
+with less processing power, but still maintaining the on-board 
+wireless capabilities. 
+The processor is reduced on the Pi Zero, which is perhaps the 
+largest difference between the two controllers. Both models also 
+include 20 I/O pins that can be configured as needed. The Pi 3 
+model B has 4 core processor running at 1.2GHz, however it only 
+supports 1gb of ram. The Pi Zero has a single core processor 
+running at 1GHz, in addition to 512MB of RAM.   
+
+
+%https://www.raspberrypi.org/products/raspberry-pi-3-model-b/
+
+%https://www.raspberrypi.org/products/raspberry-pi-zero-w/
+
+\subsubsection{OpenRex}
+
+
+The OpenRex\cite{r4} board is essentially a more-powerful version 
+of the Pi 3. It includes a couple more ports like SATA as well as 
+an on-board gyroscope. 
+While some of these features could prove useful to the 
+overall project, others are completely unnecessary for our 
+application (like the humidity sensor). Additionally, the OpenRex 
+does not have as much community support as the Pi and Arduino 
+platforms. I/O, power, and size are nearly identical to the Pi, 
+however, the OpenRex does not have built-in wireless communication. 
+The OpenRex has a MX6 processor running 4 cores at 1.2GHz. 
+Additionally, it supports up to 4gb of ram which means it could be 
+capable of handling image processing without a base-station.  
+
+
+%http://www.imx6rex.com/open-rex/
+
+\subsection{Discussion}
+
+The Pi is the strongest contender here for a number of reasons. The 
+first being cost. While the Arduino is very comparable at \$35, the 
+OpenRex board costs as much as \$335 for their top model. The Pi 
+comes with a similar processor, and still includes a processor in 
+its smaller form on the Pi Zero. The Pi Zero costs only \$10, and 
+still includes the wireless capabilities that the Arduino and 
+OpenRex do not have. The additional boards needed to run the 
+Arduino and OpenRex add unnecessary complexity to the project. 
+
+\subsection{Conclusion}
+
+The Pi Zero W is going to be our board of choice for this project. 
+While it's processor is smaller than the Pi or OpenRex, our 
+solution is to use the processing power of our base-station to our 
+advantage. The small form factor reduces our weight and size while 
+still keeping the camera, wireless, and I/O connections we need. In 
+addition to being small, it is also the cheapest option and has a 
+very large support community should we run into problems that are 
+hardware specific. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Operating Systems}
+
+\subsection{Overview}
+
+For our project we will need 2 operating systems that are capable 
+of interacting with each other in one form or another. One OS is for 
+our controller on-board of the vehicle, and the second is for our 
+base-station. 
+
+\subsection{Criteria}
+
+Operating systems will be evaluated based on the following criteria:
+\begin{enumerate}
+\item{The OS being loaded onto our controller must be lightweight 
+and efficient, capable of running on a Pi Zero W}
+
+\item{The OS running on our base-station must be capable of 
+effectively utilizing the processing power of that system, in 
+addition to being lightweight and stable.}
+
+\item{Both operating systems should be based on a common platform 
+and share similar file structures.}
+\end{enumerate}
+
+\subsection{Potential Choices}
+
+There are quite a few Linux distributions floating around that 
+could be very applicable to this project. However, Operating 
+systems that are widely used will take precedence here because 
+generally, they are stable over a variety of platforms. Because of 
+this we will be looking into Raspbian for the Pi, as well as Win 10 
+iot core. For the base-station we will be comparing Ubuntu to 
+Windows architectures. It is important for these to be similar 
+because it gives us flexibility during development. If we are 
+running Windows we can develop an application on either device 
+without needing to translate code for a different system.
+
+\subsubsection{Rasbian}
+
+Rasbian\cite{r5} is a Debian based operating system that is specifically 
+designed for the Raspberry Pi boards. Since Pi's have been selected 
+as our hardware of choice, it is a logical choice to use Raspbian as 
+our default OS. The problem with Raspbian is that it is loaded with 
+a lot of unnecessary programs that will not be needed for our 
+project. The GUI is beneficial for troubleshooting, however it 
+consumes resources and will ultimately be disabled to favor 
+performance. 
+
+% https://www.raspbian.org/RaspbianAbout
+
+\subsubsection{Windows 10 / Win 10 iot Core}
+
+Windows 10 and Win 10 iot core\cite{r6} are both based on the Windows 
+architecture. The Win 10 core is capable of running on the Pi, and 
+interfaces smoothly with other windows devices. Windows is stable 
+and can effectively manage hardware resources for bulky programs. 
+The downside to this is that there is a small community that is 
+using the Win 10 core on the Pi, but support is limited. 
+Additionally, if the Pi is not going to be running a Windows OS, 
+then the base-station should be similarly converted. 
+
+%https://developer.microsoft.com/en-us/windows/iot
+
+\subsubsection{Ubuntu}
+
+Ubuntu\cite{r7} is also Debian based, like Raspbian. This makes it a 
+preferable choice over windows if the Pi is not running a Win 10 
+iot core. Ubuntu is the most installed linux distro, and has a 
+stable version available for free. There are also lightweight 
+versions of Ubuntu, making it a possible candidate for running on 
+the Pi as well. Ubuntu would allow us to easily communicate, 
+develop, and test using one stable platform.  
+
+%https://www.ubuntu.com/
+
+\subsection{Discussion}
+
+The key in this selection is finding a balance between two 
+operating systems that results in simplicity. There are two clear 
+options here. The first is a Windows 10 base-station combined with 
+a Win 10 iot core running on the Pi. The second option is some sort 
+of Debian - Debian configuration. This could mean Ubuntu to Ubuntu 
+or Rasbian to Rasbian
+
+
+\subsection{Conclusion}
+
+It comes as little surprise that Raspbian is going to be the 
+preferred OS for the Pi. It is lightweight enough to run 
+efficiently on the Pi Zero, even with a GUI. The community support 
+for Raspbian also gives it an edge over Win 10 iot core and Ubuntu. 
+For our base station we should use Ubuntu, or a similar Debian 
+based OS. Ubuntu is stable, widely supported, and can run alongside 
+Windows on the same machine. Ubuntu will allow us to develop 
+programs for the Pi without needing a special IDE. Additionally, 
+using 3rd party utilities like OpenCV are simpler for Ubuntu / 
+Raspbian because they are designed for a linux system.  
+
+
+
+
+
+\section{Image Processing}
+
+\subsection{Overview}
+
+Our Micro-Air Vehicle is required to have an on-board camera system 
+to stream video back to our base-station. So we are choosing to use 
+this camera with an image-recognition software that is capable to 
+finding the objects we need to look for during the competition. 
+Image processing software is cumbersome, and with our Pi Zero we 
+needed a unique solution to provide adequate processing power. So 
+we are choosing to send the video feed back to our base station for 
+processing, and sending the corresponding commands back to the 
+controller. 
+
+\subsection{Criteria}
+
+\begin{enumerate}
+\item{The program or software must be capable of running on a 
+laptop that is not connected to the internet.}
+
+\item{It must be able to identify the main obstacle located near 
+the center of the competition area.}
+
+\item{It must be able to identify the boundary lines that mark the 
+edge of the competition area.}
+
+\item{It must be capable of identifying landing areas, as well as 
+the packages we need to pick up and deliver. }
+\end{enumerate}
+
+\subsection{Potential Choices}
+
+Writing our own algorithm to locate objects is far beyond the scope 
+of this project, so we need a third-party program for the base 
+architecture. Matlab can be fairly lightweight if you do not 
+include the GUI and additional packages, which makes it a viable 
+option for this project. OpenCV and OpenSLAM are open source 
+projects that could also meet our criteria. OpenCV is specifically 
+designed for image processing, while OpenSLAM is intended for 3-D 
+mapping projects. 
+
+\subsubsection{Matlab - Image Processing Toolbox}
+
+Matlab has many different packages that run with it. One of these 
+packages is the Image Processing Toolbox\cite{r9}. This toolbox allows you to take a camera or video input and filter out colors, detect 
+objects, and digitally stabilize video streams. The downside to 
+Matlab is that it is bundled with other packages and isn't 
+necessarily the most efficient processing option. For example, the 
+image processing toolbox recommends being installed alongside six 
+additional toolboxes. It does, however, run on a variety of 
+platforms and languages making it simple to migrate from one device 
+to another in the future. 
+
+%https://www.mathworks.com/products/image.html
+
+\subsubsection{OpenCV}
+
+OpenCV is an open source library the is designed specifically for 
+computer vision and image processing. It runs in C, C++, Python, 
+and Java. It also supports Windows, Linux, MacOS, iOS, and Android 
+platforms. "OpenCV was designed for computational efficiency and 
+with a strong focus on real-time applications. Written in optimized 
+C/C++, the library can take advantage of multi-core processing." \cite{r8}.
+OpenCV is capable of filtering colors to identify specific objects. 
+Additionally, by knowing a size of a specific object, OpenCV can 
+then calculate its distance away from that object. 
+
+%https://opencv.org/
+
+\subsubsection{OpenSLAM}
+
+SLAM stands for simultaneous localization and mapping. 
+OpenSLAM\cite{r10} is an open-source repository of projects that 
+utilize various SLAM algorithms to map environments. Essentially 
+SLAM sets out to map a complete environment by tracking an objects 
+location in approximation with a moving target. This requires an 
+accurate measure of the vehicles speed, as well as a power computer 
+to run the algorithm. While SLAM algorithms can be tailored to run 
+on the available resources, it is primarily designed for 
+applications like autonomous cars which can be fitted with powerful 
+processing units. Additionally, it is intended to map 3 dimensional 
+environments, not to filter for individual colors.
+
+%http://openslam.org/
+
+\subsection{Discussion}
+
+Matlab provides a robust system that can also be used for other 
+sensors and flight information. However, it is not the best option 
+for image processing due to its required dependencies. OpenCV and 
+OpenSLAM are both open source options that are fully capable of 
+identifying the objects we need during the competition. OpenSLAM 
+takes this a step further though and actively maps the environment 
+we are flying in. 
+
+\subsection{Conclusion}
+
+OpenCV is going to be our preferred option here because it 
+accomplished everything that the Matlab software can in a smaller 
+package. OpenSLAM could be modified to locate colors during our 
+competition, but the 3-D mapping functionality that it is intended 
+for is not something we need to have for our project. OpenCV is the 
+lightweight and simple option that accomplishes what we need it to 
+do and nothing more. 
+
+\vspace{2mm}
+
+%\section{References}
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+
+
+\end{document}
+
