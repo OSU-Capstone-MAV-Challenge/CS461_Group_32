@@ -1,0 +1,133 @@
+\documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
+\usepackage{listings}
+\usepackage{pgfgantt}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    %bookmarks=false,    % show bookmarks bar?
+    pdftitle={MAV Competition Software Requirements},    % title
+    pdfauthor={Kaiyuan Fan, Yingshi Huang, Justin Sherburne },% author
+    pdfkeywords={requirements documents, Capstone, MAV, AHS}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=blue,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\urlstyle{same}
+\def\myversion{ 1.0 }
+\def\class{CS 461 - CS Senior Capstone}
+\def\term{Fall 2017}
+\date{}
+
+\usepackage{hyperref}
+\title{AHS Micro-Air Vehicle Challenge}
+\author{ Instructor: Kevin McGrath, Kirsten Winters \\
+    Project Sponsor: Nancy Squires, Ph.D.
+}
+\begin{document}
+\null  % Empty line
+\nointerlineskip  % No skip for prev line
+\vfill
+\let\snewpage \newpage
+\let\newpage \relax
+\maketitle
+\begin{center}
+\class\\
+\term\\
+\huge{Requirements Document}\par
+\vspace{2mm}
+\large{Written by:}\par
+\normalsize{Kaiyuan Fan, Yingshi Huang, Justin Sherburne}\par
+\vspace{8mm}
+\large{\textbf{Abstract:}}\par 
+\end{center}
+\vspace{2mm}
+\normalsize{
+This document is intended to define project specifications and requirements. It contains a statement of what requirements need to be met for MAV challenge, how the aircraft works, and technologies and software are used to operate the control board. This document will also include proposed solutions for various challenges, as well as project constraints. It is intended for project sponsors, collaborators, or as a resource to future projects of a similar nature.
+
+}
+
+\let \newpage \snewpage
+\vfill 
+\break % page break
+
+\tableofcontents
+
+\section{Data Collection}
+\subsection{Overview}
+We are going to design and manufacture a helicopter to compete in the micro air vehicle challenge. We are going to complete a delivery package mission. the delivery/pickups location area is roughly known, the exact location of each area of interest is unknown and may change from team to team. Our helicopter needs able to find the targets, detect the obstacles, and search the landing places.
+
+
+\subsection{Criteria}
+\begin{itemize} 
+\item Able to measure the helicopter flight altitude.
+\item Able to measure the distance to the obstacles.
+\item Able to measure the range of the boundary.
+\item Able to find the targets.
+\item 	Able to find the landing places.
+
+\end{itemize}
+
+\subsection{Potential Choices:}
+\subsubsection{Camera}
+Camera can easily capture the images. For autonomous operation, these “images” can be used by video-processing algorithms for target and home-base search and hover-hold operations.
+\subsubsection{Sonar sensor}
+Sound navigation and ranging sensor can send propagation of sound to detect objects. Sonar’s most popular and primary use is to be able to "see" underwater. The acoustic frequencies used in sonar systems vary from very low (infrasonic) to extremely high (ultrasonic).\cite{r1}
+\subsubsection{Infrared sensor}
+Infrared sensor uses infrared radiation to detect object. Infrared radiation is used in industrial, scientific, and medical applications. Night-vision devices using active near-infrared illumination allow people or animals to be observed without the observer being detected.\cite{r2}
+\subsection{Discussion}
+Sonar and infrared sensor can use to detect obstacle, but cannot easily to process data to make it suitable for visualization. All three types of sensors can be easily found at market, but camera is the best technology to use for implementation. With OpenCV support, we can detect the different targets and landing places with their colors. We can even measure the distance to the object if we know the original size of the object.
+\subsection{Conclusion}
+We are going to implement two cameras in our design. One in front Camera to process stream video and one at bottom to find targets and the landing places.
+
+\section{Data analysis}
+
+\subsection{Overview}
+With the data collected by the helicopter. In the autonomous operation, Raspberry pi as the helicopter core processor cannot deal with large amount of data. We should handle these data in our base station. We are using some interfaces to construct a 3-D environment, calculating position of the helicopter, the speed, acceleration and more.
+\subsection{Criteria}
+
+\subsection{Potential Choices:}
+\subsubsection{MATLAB}
+
+\subsection{Discussion}
+
+\subsection{Conclusion}
+
+
+
+\section{Communication}
+\subsection{Overview}
+Our helicopter need collect data and send to the ground station. The communication between helicopter and ground station should be reliable and stable. And require high speed to process stream video, the communication latency and the Connectable distance should be in a reasonable range.
+\subsection{Criteria}
+\begin{itemize} 
+\item 	Must be able to maintain a WiFi connection capable of streaming at minimum: 2 videos at 720p 30fps. This is equivalent to roughly 15Mb/s.
+\item 	Must be able to maintain communication at a distance of 40 ft.
+\item 	Standard communication (preferred 2.4 GHz).
+\item  Under a reasonable latency.
+
+\end{itemize}
+\subsection{Potential Choices:}
+\subsubsection{Wi-Fi}
+Wi-Fi technology may be used to provide Internet access to devices that are within the range of a wireless network that is connected to the Internet. The coverage of one or more interconnected access points (hotspots) can extend from an area as small as a few rooms to as large as many square kilometers. \cite{r3}
+\subsubsection{Bluetooth}
+Bluetooth is a wireless technology standard for exchanging data over short distances (using short-wavelength UHF radio waves in the ISM band from 2.4 to 2.485 GHz from fixed and mobile devices, and building personal area networks.\cite{r4}
+\subsubsection{Wired Ethernet(LAN)}
+Ethernet is a network technology commonly used in local area networks. A wired Ethernet connection can theoretically offer up to 10 Gb/s, and the speed is consistent.
+\subsection{Discussion}
+Wired communication is uncapable for our project while it provides the best transmit speed and stability. Our helicopter has to use the wireless communication technology. The Bluetooth cannot give us enough transmit rate compare with the Wi-Fi, and the connectable distance usually under 10 meters. Wi-Fi can provide much more reliable and stable communication between helicopter and the ground station.
+\subsection{Conclusion}
+We are using Wi-Fi as our communication technology to send and receive data.
+
+
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+
+
+\end{document}
