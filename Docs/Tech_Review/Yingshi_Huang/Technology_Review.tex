@@ -1,0 +1,135 @@
+\documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
+\usepackage{listings}
+\usepackage{cite}
+\usepackage{pgfgantt}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    %bookmarks=false,    % show bookmarks bar?
+    pdftitle={MAV Competition Software Requirements},    % title
+    pdfauthor={Kaiyuan Fan, Yingshi Huang, Justin Sherburne },% author
+    pdfkeywords={requirements documents, Capstone, MAV, AHS}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=blue,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\urlstyle{same}
+\def\myversion{ 1.0 }
+\def\class{CS 461 - CS Senior Capstone}
+\def\term{Fall 2017}
+\date{}
+
+\usepackage{hyperref}
+\title{AHS Micro-Air Vehicle Challenge}
+\author{ Instructor: Kevin McGrath, Kirsten Winters \\
+    Project Sponsor: Nancy Squires, Ph.D.
+}
+\begin{document}
+\null  % Empty line
+\nointerlineskip  % No skip for prev line
+\vfill
+\let\snewpage \newpage
+\let\newpage \relax
+\maketitle
+\begin{center}
+\class\\
+\term\\
+\huge{Technology Review}\par
+\vspace{2mm}
+\large{Written by:}\par
+\normalsize{Yingshi Huang}\par
+\vspace{8mm}
+\large{\textbf{Abstract:}}\par 
+\end{center}
+\vspace{2mm}
+\normalsize{
+Technology Review is to organize detail of criterion, determine the existing technologies and select the most appropriate method. The problems and features can allocate in three parts, communication, manual control and autonomous driving. First, the communication between micro-helicopter and the control board. On the base of competitions rules, UDP, TCP, Web-Internet, and Radio consider as possible solutions for connection. Second, the manual control of hardware depends on on-market products which can match micro-helicopter computer and control board. Game controller (X-Box), keyboard and radio control transmitter these are on-market products able to correspond hardware. Third, autonomous driving is an individual feature and will self-calculates for moving. Camera, software libraries, distance sensor and accelerate positioning will provide information for driving the micro-helicopter. 
+}
+
+\let \newpage \snewpage
+\break % page break
+
+%\tableofcontents
+
+
+\section*{Communication System}
+\subsection*{Overview}
+Communications between three hardware: micro-helicopter and control board, control board and remote controller.
+\subsection*{Criteria}
+\begin{itemize}
+\item Micro-helicopter will receive data from the control board and respond to movement.
+\item Control board will get information from the remote controller which provides data to micro-helicopter for re-position.
+\end{itemize}
+\subsection*{Potential Choices}
+\subsubsection*{UDP}\hfill \break
+UDP \cite{UDP}stands for User Datagram Protocol and uses of data transferring. UDP will not acknowledge the receipt of the sending data. It means a disadvantage that no resends for lost data. On the contrary, an advantage is that save time without re-sending missing data. It is typical for immediate data such as online video, audio transmission, online gaming. Intermittent video or audio is an appearance of Lost data.
+\subsubsection*{TCP}\hfill \break
+TCP \cite{TCP}stands for Transmission Control Protocol which is connection-oriented and re-transmittable. An advantage is able to resend data and acknowledge lost segments. A disadvantage is extending sending time. TCP is representative of sending guarantee data like Web-Page, files.
+\subsubsection*{Web-Internet}\hfill \break
+Web-Internet is a tool using internet via the web to communicate. An advantage is that no need for storage in control board and able to calculate data on other divides. A disadvantage is that all data depend on transferring which requires unhindered signal transmissions.
+\subsubsection*{Radio 2.4GHz}\hfill \break
+Radio 2.4GHz is a lower frequency but uses by much modern technology divides. An advantage to use is various options of on-market divides, including WIFI accessions. A disadvantage of using is that different obstacles or obstructions that can impact range and performance. 
+\subsection*{Discussion}\hfill \break 
+In theory, the computer will need lots of data to calculate distance and movement. Ensure data received is not necessary, interrupted data is still value to estimate length and size of target and obstacles. Although 2.4GHz radio might be impacted, this communication is still able to send and receive data between woods and thin walls. 
+\subsection*{Conclusion}\hfill \break
+Because of the situations could be happened, UDP can have better performance than TCP. Continued and various data sending and receiving for saving time to evaluate distance and length of micro-helicopter to the target or obstacles. Skip of video will be fixed to be the different anger of position. WIFI is one of most commonly used communications and efficient in exchanging information. UDP and WIFI are preferred solutions. 
+
+\section*{Remote Manual Controller}
+\subsection*{Overview}\hfill \break
+It is an action between human giving the commands to remote controller and reactions of micro-helicopter. Possible remote controllers can be keyboard, game-pad, radio control transmitter. 
+\subsection*{Criteria}\hfill \break
+\begin{itemize}
+\item The remote controller can send the signals to micro-helicopter, and make the progressions of movements.
+\end{itemize}
+\subsection*{Potential Choices}
+\subsubsection*{Keyboard}\hfill \break
+Keyboard has more connections keys than the others. However, joystick and Radio control transmitter also have enough connection. The advantage of keyboard connections is separated and precise. The disadvantage of those relationships is reactions and respond will slower be caused by pressing different keys.
+\subsubsection*{Joystick}\hfill \break
+A Joystick is easy to learn how to use. However, hard to control the joystick with precise work. The advantage is less time of human reaction and easy use by different ranges of ages. The disadvantage is hard to control the micro-helicopter for small movements.
+\subsubsection*{Radio control transmitter}\hfill \break 
+Radio control transmitter is typical to use for micro-helicopter. The on-market and manufacture are selling micro-helicopter and Radio control transmitter together. The advantage is a lower cost of material and higher profits. The disadvantage is larger and heavier. 
+\subsection*{Discussion}\hfill \break
+According to the requirement of movements of the micro-helicopter, the tunnel has enough space for movement and obstacle are able to avoid with a joystick. Too many connections are not accessible for the pilot to use in the tunnel which needs to avoid the obstacles and picking up target. Radio control transmitter has weaker signal and larger equipment. 
+\subsection*{Conclusion}\hfill \break
+Compare the three possibilities; the keyboard has too many distractions. The Radio control transmitter will add too many weights for the micro-helicopter. So the better choice between increasing the weight and fewer distractions will be the joystick.
+
+\section*{Autonomous Driving}
+\subsection*{Overview}
+Non-human control of micro-helicopter moving, pre-written code for distance calculations and exact movements depend on calculations. 
+\subsection*{Criteria}
+\begin{itemize}
+\item Correct calculations from information
+\item Using calculations to make movements 
+\end{itemize}
+\subsection*{Potential Choices}
+\subsubsection*{distance sensor}
+Distance sensor is a small tool to get a certain range of distances directly. The advantage to use distance sensor is receiving data directly and no need to wait calculations. The disadvantage for distance sensor is vibration of the micro-helicopter will affect the precision ratio of the distance. Incorrect distance might cause a crash to obstacle or unable to pick up the target which will lead to failure.
+\subsubsection*{cameras}
+Cameras can provide more information than distance sensor however, more data as input will need more calculation. More calculation will need correspond libraries. And it will need more time and energy to finish the tasks.
+\subsubsection*{software libraries}
+Software libraries will help the computer calculate data. However, it require more storage and computer burning.
+\subsubsection*{accelerate positioning}
+It is a method for calculating from the target or obstacles to micro-helicopter. It need time for computer to process, but all information can be handle by computer it, which mean fewer energy waste.
+\subsection*{Discussion}
+Distance will be a tool to help estimate the distance calculation but not providing correct information. Accelerate positioning depends on the images from cameras, but not necessary depend on the software libraries. However, software libraries can reduce the coding error.
+\subsection*{Conclusion}
+It is better to have correct data than not allowable error data which can lead failure. So using a camera to receive and calculate data is better than receiving direct data from sensor.
+
+
+\bibliographystyle{ieeetr}
+\begin{thebibliography}{100}
+\bibitem{UDP}Postel. User Datagram Protocol, RFC 768.
+\bibitem{TCP}TCP is defined by a number of RFCs published by the Internet Society.
+\end{thebibliography}
+
+
+\end{document}
+
+
