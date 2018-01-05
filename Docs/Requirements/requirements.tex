@@ -1,62 +1,119 @@
-\documentclass[letterpaper, 10, draftclsnofoot, onecolumn]{IEEEtran}
-\usepackage{listings}
-\usepackage{underscore}
-\usepackage[bookmarks=true]{hyperref}
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\epstopdfsetup{update} % only regenerate pdf files when eps file is newer
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{indentfirst}
-\usepackage{hyperref}
-\hypersetup{
-    %bookmarks=false,    % show bookmarks bar?
-    pdftitle={MAV Competition Software Requirements},    % title
-    pdfauthor={Kaiyuan Fan, Yingshi Huang, Justin Sherburne },% author
-    pdfkeywords={requirements documents, Capstone, MAV, AHS}, % list of keywords
-    colorlinks=true,       % false: boxed links; true: colored links
-    linkcolor=blue,       % color of internal links
-    citecolor=black,       % color of links to bibliography
-    filecolor=black,        % color of file links
-    urlcolor=blue,        % color of external links
-    linktoc=page            % only page is linked
-}%
-\urlstyle{same}
-\def\myversion{ 1.0 }
-\def\class{CS 461 - CS Senior Capstone}
-\def\term{Fall 2017}
-\date{}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{rotating}
+\usepackage{pgfgantt}
+\usepackage{xcolor}
+\geometry{textheight=9.5in, textwidth=7in}
 
-\usepackage{hyperref}
-\title{AHS Micro-Air Vehicle Challenge}
-\author{ Instructor: Kevin McGrath, Kirsten Winters \\
-    Project Sponsor: Nancy Squires, Ph.D.
+
+\newganttchartelement{orangebar}{
+    orangebar/.style={
+        inner sep=0pt,
+        draw=red!66!black,
+        very thick,
+        top color=white,
+        bottom color=orange!80
+    },
+    orangebar label font=\slshape,
+    orangebar left shift=.1,
+    orangebar right shift=-.1
 }
+
+\newganttchartelement{bluebar}{
+    bluebar/.style={
+        inner sep=0pt,
+        draw=purple!44!black,
+        very thick,
+        top color=white,
+        bottom color=blue!80
+    },
+    bluebar label font=\slshape,
+    bluebar left shift=.1,
+    bluebar right shift=-.1
+}
+
+
+% 1. Fill in these details
+\def \CapstoneTeamName{		MAV Challenge}
+\def \CapstoneTeamNumber{		32}
+\def \GroupMemberOne{			Justin Sherburne}
+\def \GroupMemberTwo{			Kaiyuan Fan}
+\def \GroupMemberThree{			Yingshi Huang}
+\def \CapstoneProjectName{		AHS Micro-Air Vehicle Challenge}
+%\def \CapstoneSponsorCompany{	Columbia Helicopters}
+\def \CapstoneSponsorPerson{		Nancy Squires, Ph.D.}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				Requirements Document
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+\renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-\null  % Empty line
-\nointerlineskip  % No skip for prev line
-\vfill
-\let\snewpage \newpage
-\let\newpage \relax
-\maketitle
-\begin{center}
-\class\\
-\term\\
-\huge{Requirements Document}\par
-\vspace{2mm}
-\large{Written by:}\par
-\normalsize{Kaiyuan Fan, Yingshi Huang, Justin Sherburne}\par
-\vspace{8mm}
-\large{\textbf{Abstract:}}\par 
-\end{center}
-\vspace{2mm}
-\normalsize{
-This document is intended to define project specifications and requirements. It contains a statement of what requirements need to be met for MAV challenge, how the aircraft works, and technologies and software are used to operate the control board. This document will also include proposed solutions for various challenges, as well as project constraints. It is intended for project sponsors, collaborators, or as a resource to future projects of a similar nature.
-
-}
-
-\let \newpage \snewpage
-\vfill 
-\break % page break
-
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{8pt}
+            \textbf{\Huge\CapstoneProjectName}\par
+			\vspace{1.5in}
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            % \vspace{5pt}
+            {\Large\NameSigPair{\CapstoneSponsorPerson}\par}
+			\vspace{3pt}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{8pt}
+            {\Large
+                \NameSigPair{\GroupMemberOne}\par
+                \NameSigPair{\GroupMemberTwo}\par
+                \NameSigPair{\GroupMemberThree}\par
+            }
+            \vspace{.5in}
+        }
+        \begin{abstract}
+        This document is intended to define project specifications and requirements. It contains a statement of what requirements need to be met for MAV challenge, how the aircraft works, and technologies and software are used to operate the control board. This document will also include proposed solutions for various challenges, as well as project constraints. It is intended for project sponsors, collaborators, or as a resource to future projects of a similar nature.
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
 \tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+\listoffigures
+%\listoftables
+\clearpage
 
 
 \section*{Revision History}
@@ -66,14 +123,15 @@ This document is intended to define project specifications and requirements. It 
         \hline
 	    Name & Date & Reason For Changes & Version\\
         \hline
-	    Project Requirements & Oct 25 & Initial Creation & 1.0\\
+	    Project Requirements & Oct 25, 2017 & Initial Creation & 1.0\\
+        \hline
+		Project Requirements & Jan 5, 2018 & Design update & 2.0\\
         \hline
     \end{tabular}
 \end{center}
 
-\section{Introduction}
 
-Micro-Air Vehicle Competition Version 1.0
+\section{Introduction}
 
 The Micro-Air Vehicle challenge is a competition hosted by the American Helicopter Society International. As potential participants in this competition, it is our task to design and build an aircraft capable of competing in the AHS event in May.
 
@@ -102,11 +160,6 @@ Vehicle requirements will be dependant on competition goals and requirements, an
 \item \textbf{GUI: } Graphical User Interface
 
 \end{enumerate}
-
-
-\subsection{References}
-\bibliographystyle{ieeetr}
-\bibliography{references}
 
 
 \section{Overall Description}
@@ -228,26 +281,80 @@ The Micro-Air vehicle is subject to the following constraints based off of previ
 
 
 \end{enumerate}
-\subsection{Gantt Chart}
-\vspace{2mm}
-\begin{ganttchart}[vgrid={draw=none, dotted}]{1}{24}
-  vgrid={{black, dotted}}
-  %title
-  \gantttitle{2017 - 2018}{24}\\
-  \gantttitle{Oct}{3} 
-  \gantttitle{Nov}{3} 
-  \gantttitle{Dec-2017}{3} 
-  \gantttitle{Jan-2018}{3} 
-  \gantttitle{Feb}{3} 
-  \gantttitle{March}{3} 
-  \gantttitle{April}{3}
-  \gantttitle{May}{3} \\
-  %tasks
-  \ganttbar{Paper Submission- Design proposal}{2}{12} \\
-  \ganttlinkedbar{Team Design and Development}{13}{16} \\
-  \ganttlinkedbar{Competition Final Selection}{17}{18}\\
-  \ganttlinkedbar{Final Design, Travel,and Transportation}{19}{23}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+
+\newpage
+
+\section{Timeline}
+
+\begin{rotate}{270}
+\begin{ganttchart}[
+    hgrid style/.style={black, dotted},
+    vgrid={*5{black,dotted}, *1{white, dotted}, *1{black, dashed}},
+    x unit=.8mm,
+    y unit chart=9mm,
+    y unit title=12mm,
+    time slot format=isodate,
+    group label font=\bfseries \Large,
+    link/.style={->, thick}
+    ]{2017-10-04}{2018-06-21}
+    \gantttitlecalendar{year, month=name}\\
+
+    \ganttgroup[
+        group/.append style={fill=blue}
+    ]{System Build}{2017-10-04}{2018-5-12}\\ [grid]
+	
+    \ganttbluebar[
+        name=Communications
+    ]{Communications}{2017-10-07}{2017-11-12}\\ [grid] 
+	
+    \ganttbluebar[
+    	name=Motor Control
+    ]{Motor Control}{2017-11-12}{2018-01-15}\\ [grid]   
+	
+    \ganttbluebar[
+    	name=Flight Control
+    ]{Flight Control}{2018-1-11}{2018-02-30}\\ [grid]    
+	
+    \ganttbluebar[
+    	name=User Interface
+    ]{User Interface}{2017-12-12}{2018-3-13}\\ [grid]
+	
+    \ganttbluebar[
+    	name=Image Recognition
+    ]{Image Recognition}{2017-12-12}{2018-3-13}\\ [grid]
+
+    \ganttbluebar[
+    	name=Integration Testing
+    ]{Integration Testing}{2018-3-13}{2018-5-12}\\ [grid]
+
+    \ganttgroup[
+        group/.append style={fill=orange}
+    ]{Competition}{2017-11-9}{2018-05-16}\\ [grid]
+	
+    \ganttorangebar[
+        name=Design proposal
+    ]{Design proposal}{2017-11-20}{2018-01-30}\\ [grid]
+	
+	\ganttorangebar[
+        name=Final Selection
+    ]{Final Selection}{2018-01-30}{2018-03-17}\\ [grid]
+	
+	\ganttorangebar[
+        name=Event Participation
+    ]{Event Participation}{2018-05-12}{2018-05-16}\\ [grid]
+    
+    \ganttgroup[
+        group/.append style={fill=green}
+    ]{Expo}{2018-05-16}{2018-06-15}\\ [grid]
+    
 \end{ganttchart}
+\end{rotate}
+
 
 
 \end{document}
