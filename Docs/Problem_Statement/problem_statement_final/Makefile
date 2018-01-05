@@ -1,5 +1,5 @@
 LATEX	= latex -shell-escape
-#BIBTEX	= bibtex
+BIBTEX	= bibtex
 DVIPS	= dvips
 DVIPDF  = dvipdft
 XDVI	= xdvi -gamma 4
@@ -16,12 +16,12 @@ pdf: $(PDF)
 ps: $(PSF)
 
 $(TRG): %.dvi: %.tex $(EXAMPLES)
-	#one way of including source code is to use pygments
-	#pygmentize -f latex -o __${EXAMPLES}.tex ${EXAMPLES}
-	#requires that you \include{pygments.tex} in your preamble
+
 
 	$(LATEX) $<
-	#$(BIBTEX) $(<:%.tex=%)
+	$(BIBTEX) $(<:%.tex=%)
+	$(LATEX) $<
+	$(LATEX) $<
 	#remove the pygmentized output to avoid cluttering up the directory
 	#rm __${SRC}.tex
 
@@ -40,8 +40,11 @@ showps: $(PSF)
 
 all: pdf
 
-clean:
-	rm -f *.pdf *.ps *.dvi *.out *.log *.aux *.bbl *.blg *.pyg
+clean: 
+	rm -f *.log *.lof *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ *.dvi *.pyg *.ps
 
+clean-all: 
+	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ *.dvi *.pyg *.ps *.pdf
+	
 .PHONY: all show clean ps pdf showps
 
