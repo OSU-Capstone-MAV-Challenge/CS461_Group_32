@@ -96,7 +96,7 @@
         \hline
 		Name & Date & Reason For Changes & Version\\
         \hline
-		Progress Report & Dec 3, 2017 & Initial Creation & 1.0\\
+		Midterm Progress Report & Feb 15, 2018 & Initial Creation & 1.0\\
 		\hline 
     \end{tabular}
 \end{center}
@@ -121,38 +121,28 @@ The goal is to create a vehicle capable of navigating the competition environmen
 \item{Our vehicle should fully comply with AHS competition rules and guidelines. }
 \end{enumerate}
 
+\section{Justin Sherburne's Report}
+
+\subsection{Current Progress}
+
+During the course of this term I have been developing our image recognition software for the competition. Currently I have implemented tracking based on object color. This should be sufficient for our autonomous design because the baoundary is marked yellow, deliveries are red, and landing area's are black. It is possible to implement some form of pattern matching to fill in the gaps if the color is not enough by itself. Currently I am exploring an open-source guide written by Kyle Hounslow which fully implements object tracking based on color. Using this guide we are able to identify individual colors in near real-time by filtering specific values from the video feed. 
+
+Due to the complexity of the calculations being used for image processing, the majority of the processing is being done on the base station. Ultimately the code will also contain the controls feature and open a wireless link to the vehicle for control. It should require one parameter to be passed in at startup which is the IP of the vehicle (unless this IP can be fixed in the closed network). Streaming of the video occurs over the WiFi Pineapple, which acts as a simple router for our purposes. This has been tested and works well in a veriety of conditions. We will need to continue testing this in te future to make sure it can withstand long-distances and area's with strong network activity.  
 
 
-\section{Current Progress}
+\subsection{Future Goals}
 
 
 
-\section{Future Goals}
+\subsection{Problems}
 
+One of the biggest problems I've encountered was in regard to the camrea multiplexor we were planning on implementing. The documentation from the manufacturer wasn't completely correct, so it was not able to stream both camrea's at the same time. Instead you could switch between the two feeds using the GPIO pins on the PI zero. Unfortuneately for our situation if both camreas were not rinning simultaniously, then one of them was simply dead weight. 
 
+\subsection{Solutions}
 
-\section{Problems}
+Our solution to the camrea problem had a couple of different options. The first option was to mount a second PI Zero to the vehicle. This is possible given our excess of thrust, but we would have also ran into issues with power and control. It is simple to have all of the ocmponents running to one PI Zero, but having two on the aircraft would unneccisarily complicate things. 
 
-\subsection{Vehicle Weight}
-The competition requirements state that the vehicle must be lighter than 500g. Because this restriction does not exclude specific components, every piece of the vehicle has to be calculated carefully. This means we must also take special consideration when planning our hardware choices.
-
-\subsection{Object Distance}
-While the micro-air vehicle is moving, we must be able to determine our distance away from both the ground and specific obstacles within the environment. Additionally, we need to be able to locate specific objectives such as letters and landing zones.
-
-\subsection{Communication}
-At minimum, the vehicle must be capable of streaming one video feed to the base station though whatever communication method we choose. However, our hardware configuration requires us to stream two video feeds to the base station, and to return flight commands beck to the vehicle. 
-
-
-\section{Solutions}
-
-\subsection{Vehicle Weight}
-Our research on hardware considerations led us to the Raspberry Pi Zero. This platform weighs over 40 grams less than the full size Pi model, while still maintaining a single-core 1GHz processor. Additionally, the cameras used for the Pi platform are lightweight and compatible with the Pi Zero.
-
-\subsection{Object Distance}
-Our primary source of distance tracking will come from our ultrasonic sensors. These sensors will be used to find distances from the ground and objects directly in front of the vehicle. OpenCV will be used to locate the specific objects within the competition area. Through the use of mathematic formulas we can also calculate our distance away from objects if we know their size prior to competition. 
-
-\subsection{Communication}
-To establish reliable communication, our solution has several components. The key element is the addition of a router to act as an access point for the Pi for this we used a WiFi Pineapple because it is lightweight and something we had on-hand. This router allows the Pi Zero to connect using it's built-in WiFi transmitter, and still allows the entire project to work independently of outside power sources. The bandwidth provided by the WiFi Pineapple is adequate for our project's purposes. 
+The second option, and the option we decided to take, was to lose a camera. This reduces the amount of information we are able to receive from the vehicle, but it also reduces the amount of network traffic and complexity of the project. In return we will need to rely more on our ultrasonic sensors, and be a little more clever with our autonomous controls. The remaining camrea will be direced straight down, and the aircraft will mostly trace the outside boundary, conducting a search pattern in the designated area.
 
 
 \newpage
