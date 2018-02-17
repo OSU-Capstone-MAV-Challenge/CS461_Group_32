@@ -33,7 +33,7 @@
 				%Design Document
 				Midterm Report
 				}
-			
+
 \newcommand{\NameSigPair}[1]{\par
 \makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
 \par\vspace{-12pt} \textit{\tiny\noindent
@@ -47,9 +47,9 @@
     \pagenumbering{gobble}
     \begin{singlespace}
     	\includegraphics[height=4cm]{coe_v_spot1}
-        \hfill 
+        \hfill
         % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
-        %\includegraphics[height=4cm]{CompanyLogo}   
+        %\includegraphics[height=4cm]{CompanyLogo}
         \par\vspace{.2in}
         \centering
         \scshape{
@@ -66,7 +66,7 @@
             {\large Prepared by }\par
             Group\CapstoneTeamNumber\par
             % 5. comment out the line below this one if you do not wish to name your team
-            \CapstoneTeamName\par 
+            \CapstoneTeamName\par
             \vspace{8pt}
             {\Large
                 \NameSigPair{\GroupMemberOne}\par
@@ -76,8 +76,8 @@
             \vspace{.5in}
         }
         \begin{abstract}
-        The purpose of this document is to provide a reflection on the progress of the Micro Air Vehicle project. We are now sixteen weeks into the project, approximately half of the way to completion. Here we will outline problems and possible solutions we have encountered this far, as well as a breakdown of weekly progress made thus far. 
-        \end{abstract}     
+        The purpose of this document is to provide a reflection on the progress of the Micro Air Vehicle project. We are now sixteen weeks into the project, approximately half of the way to completion. Here we will outline problems and possible solutions we have encountered this far, as well as a breakdown of weekly progress made thus far.
+        \end{abstract}
     \end{singlespace}
 \end{titlepage}
 \newpage
@@ -97,7 +97,7 @@
 		Name & Date & Reason For Changes & Version\\
         \hline
 		Midterm Progress Report & Feb 15, 2018 & Initial Creation & 1.0\\
-		\hline 
+		\hline
     \end{tabular}
 \end{center}
 
@@ -125,33 +125,24 @@ The goal is to create a vehicle capable of navigating the competition environmen
 
 \subsection{Current Progress}
 
-During the course of this term I have been developing our image recognition software for the competition. Currently I have implemented tracking based on object color. This should be sufficient for our autonomous design because the boundary is marked yellow, deliveries are red, and landing areas are black. It is possible to implement some form of pattern matching to fill in the gaps if the color is not enough by itself. Currently I am exploring an open-source guide written by Kyle Hounslow which fully implements object tracking based on color. Using this guide, we are able to identify individual colors in near real-time by filtering specific values from the video feed. Once these objects are tracked, their locations within the image frame are stored in a matrix. This matric is easily addressable and can be used by another function to predict where the aircraft should travel next. Because we had to remove one camera from our original design, the current plan for the autonomous flight will be to follow the boundary lines until we find one of our targets. 
+During the course of this term I have been developing our image recognition software for the competition. Currently I have implemented tracking based on object color. This should be sufficient for our autonomous design because the baoundary is marked yellow, deliveries are red, and landing area's are black. It is possible to implement some form of pattern matching to fill in the gaps if the color is not enough by itself. Currently I am exploring an open-source guide written by Kyle Hounslow which fully implements object tracking based on color. Using this guide we are able to identify individual colors in near real-time by filtering specific values from the video feed.
 
-Due to the complexity of the calculations being used for image processing, the majority of the processing is being done on the base station. Ultimately the code will also contain the controls feature and open a wireless link to the vehicle for control. It should require one parameter to be passed in at startup which is the IP of the vehicle (unless this IP can be fixed in the closed network). Streaming of the video occurs over the Wi-Fi Pineapple, which acts as a simple router for our purposes. This has been tested and works well in a variety of conditions. We will need to continue testing on the router in the future to make sure it can withstand long-distances and areas with strong network activity.
+Due to the complexity of the calculations being used for image processing, the majority of the processing is being done on the base station. Ultimately the code will also contain the controls feature and open a wireless link to the vehicle for control. It should require one parameter to be passed in at startup which is the IP of the vehicle (unless this IP can be fixed in the closed network). Streaming of the video occurs over the WiFi Pineapple, which acts as a simple router for our purposes. This has been tested and works well in a veriety of conditions. We will need to continue testing this in te future to make sure it can withstand long-distances and area's with strong network activity.
 
 
 \subsection{Future Goals}
 
-In the future I will continue to work on the image recognition side of the project and assist my teammates with their software when necessary. While I currently only have one color being filtered and targeted, I should be able to have several objects being tracked simultaneously by the end of the week. After that happens I will need to conduct some testing to see if we will also need to implement any pattern matching, or if we can move forward with just that. After the targets are identified, their location within the camera frame is stored in a matrix. This can be used very easily for logic controls and movement. 
 
-The ultrasonic sensors will also need to be implemented on our design. We have not yet decided if that information will be relayed to the base station for calculations, or if it will remain on the PI zero controller. If it is local, we can use that information in real-time to avoid obstacles and track our height from the ground. Because the sensors have not yet been tested or installed on the aircraft we do not know what the distance measurements will be, or how that information will be best used.
 
 \subsection{Problems}
 
-One of the biggest problems I've encountered was in regard to the camera multiplexor we were planning on implementing. The documentation from the manufacturer wasn't completely correct, so it was not able to stream both camera’s at the same time. Instead you could only switch between the two feeds using the GPIO pins on the PI zero. Unfortunately for our situation if both cameras were not running simultaneously, then one of them was simply dead weight.
-
-The second problem we've been experiencing has been from the ME and EE teams. Currently we are one month away from needing an alpha-level prototype for the competition. This means it is able to be flown, controlled manually, and have some autonomous implementation. The problem is that the ME and EE teams are still working on getting things implemented on the aircraft. The motors have not yet been wired to our motor controllers or attached to the PI Zero on-board. The ME team is still working on slight modifications to stability and balance, and the EE team needs to install voltage regulators and control modules. The CS team will have roughly two weeks to implement their progress on the aircraft before we need to demo for the competition.  
+One of the biggest problems I've encountered was in regard to the camrea multiplexor we were planning on implementing. The documentation from the manufacturer wasn't completely correct, so it was not able to stream both camrea's at the same time. Instead you could switch between the two feeds using the GPIO pins on the PI zero. Unfortuneately for our situation if both camreas were not rinning simultaniously, then one of them was simply dead weight.
 
 \subsection{Solutions}
 
-Our solution to the camera problem had a couple of different options. The first option was to mount a second PI Zero to the vehicle. This is possible given our excess of thrust, but we would have also ran into issues with power and control. It is simple to have all of the components running to one PI Zero, but having two on the aircraft would unnecessarily complicate things. 
+Our solution to the camrea problem had a couple of different options. The first option was to mount a second PI Zero to the vehicle. This is possible given our excess of thrust, but we would have also ran into issues with power and control. It is simple to have all of the ocmponents running to one PI Zero, but having two on the aircraft would unneccisarily complicate things.
 
-The second option, and the option we decided to take, was to lose a camera. This reduces the amount of information we are able to receive from the vehicle, but it also reduces the amount of network traffic and complexity of the project. In return we will need to rely more on our ultrasonic sensors and be a little more clever with our autonomous controls. The remaining camera will be directed straight down, and the aircraft will mostly trace the outside boundary, conducting a search pattern in the designated area.
-
-The solution to the delay in hardware has been to do as much programming beforehand as possible. While we cannot yet build motor controls, we are able to press on with the image recognition and network communication portions. While some things are more challenging to implement without the physical device, many things can continue development without hardware. The CS team should have at least two weeks to implement as much functionality before we need to demo our aircraft for the competition.
-
-
-
+The second option, and the option we decided to take, was to lose a camera. This reduces the amount of information we are able to receive from the vehicle, but it also reduces the amount of network traffic and complexity of the project. In return we will need to rely more on our ultrasonic sensors, and be a little more clever with our autonomous controls. The remaining camrea will be direced straight down, and the aircraft will mostly trace the outside boundary, conducting a search pattern in the designated area.
 
 \section{Yingshi Huang's Report}
 
@@ -162,7 +153,11 @@ With a better stabilization, the micro-helicopter can drive comfortable, and the
 \subsection{Goals}
 Our goal is to design and deliver a remotely piloted micro-helicopter or remotely autonomous micro-helicopter. The micro-helicopter our squad designed will be used to compete in micro air vehicle American helicopter society student challenge. In the application, our team designed to drive the micro-helicopter autonomously. First, the micro-helicopter will be able to detect the boundary of the competition field which is yellow and black tape. Second, the micro-helicopter will be ready to start from the assigned starting point and then drive and cover to the selected target point. After picking up the envelope on the ground from the selected target point, the micro-helicopter will put the envelope to the drop point. At the end of the task, the micro-helicopter will fly to the destination. In the meantime of flying movement, the micro-helicopter will perceive the obstacle in the field and avoid them.
 
+<<<<<<< HEAD
 \subsection{Problems \& Solutions}
+=======
+\subsection{Problems \& solution}
+>>>>>>> 291499e5f89de5c461138993c5e22bdd3b971df0
 To connect the hardware of the micro-helicopter, the using of raspberry pi zero w pins are necessary. Our group has found the connection of the ultrasonic sensors with raspberry pi zero w. Previously, the old series of ultrasonic sensors on the micro-helicopter cannot connect to raspberry pi zero w. However, with the released documentation of new series of the ultrasonic sensors have improved the accession of the hardware. The new selected ultrasonic sensor can detect objects from 1-mm to 500-cm, and the precise range is from 30-cm to 5-meters, If the distance detection of the ultrasonic sensor is closer than 30-cm, the data will appear as 30-cm.
 In the project, our group still need to connect the remote controller and the raspberry pi zero w. The connection between ultrasonic sensors and raspberry pi zero w has to provide distance data for the calculations in the project. The motor controller also needs to be connected to the raspberry pi zero w. Our group is going to use the documentation of the hardware and then program the pins on raspberry pi zero w to send the data to the laptop to analyze.
 
@@ -234,7 +229,11 @@ try:
 \begin{flushleft}
 except KeyboardInterrupt:
 \end{flushleft}
+<<<<<<< HEAD
 	\begin{flushleft}
+=======
+		\begin{flushleft}
+>>>>>>> 291499e5f89de5c461138993c5e22bdd3b971df0
 		\quad \#cleanup GPIO settings
 		\end{flushleft}
 		\begin{flushleft}
@@ -242,14 +241,51 @@ except KeyboardInterrupt:
 		\end{flushleft}
 		\begin{flushleft}
 		\quad print("Exiting...")
+<<<<<<< HEAD
 	\end{flushleft}
 
 
 
+=======
+		\end{flushleft}
+>>>>>>> 291499e5f89de5c461138993c5e22bdd3b971df0
 
 
+\newpage
+\section{Ten Week Retrospective}
+\vspace{.25in}
+\begin{center}
+    \begin{tabular}{|p{0.3\linewidth}|p{0.3\linewidth}|p{0.3\linewidth}|}
+        \hline
+		 Positives & Deltas: changes that need to be implemented & Actions  to be implemented to create the necessary changes. \\
+        \hline
+		 Created biography and resume for capstone class. Share OneNote with professors. Submit project preferences. & N/A & N/A  \\
+		\hline
+         Groups assigned. Organized group communication and e-mailed project sponsor. & Group availability needs to be scheduled & Created a doodle poll to have a record of possible meeting times and member availability.  \\
+		\hline
+         Problem Statement rough draft was due. Our first group meeting. Participated in a tour of Columbia Helicopters facilities in Aurora. We decided on the autonomous implementation for the project. & Sensors for autonomous implementation need to be selected. Future group meeting time needs to be established. & Another doodle poll will  be created for the group availability. Conduct sensor research before next week.  \\
+		\hline
+         The Sensor requirements were established. Problem Statement final draft was due. Present autonomous research to the group. Group meeting times established. & The Mechanical team changed from a quadcopter to a helicopter on Friday, so the Problem Statement document will need to be edited. & Problem doc will be edited over winter break, after the competition rules are announced. Project will continue as planned with the new design. \\
+		\hline
+         Ordered initial equipment for the CS implementation. The Project Requirements Document rough draft is due. The Raspberry Pi Zero W works great. & Project sponsor communication is slow-going. & Moving forward, the sponsor should be contacted at least a week ahead if it's via e-mail, or we should take advantage of her office hours for document approval. \\
+		\hline
+         The Project Requirements document final draft is due. Documents were approved via office hours. Implementation on the Raspberry Pi Zero has begun. & Raspberry Pi is not configured for use out of the box. &  Loaded the Rasbian OS onto the Raspberry Pi, and started initial implementation. \\
+		\hline
+         6th Annual MAV Student Challenge Rules are announced. The Pi was configured to stream video to the base station using WiFi communication. & Documents written prior to this week will need to be edited to reflect competition changes. Wireless streaming needs to be implemented over WiFi pineapple & Document changes will take place over winter break, and future documents will be in accordance to the new rules. WiFi Pineapple implementation will begin next week. \\
+		\hline
+    \end{tabular}
+\end{center}
 
+\begin{center}
+    \begin{tabular}{|p{0.3\linewidth}|p{0.3\linewidth}|p{0.3\linewidth}|}
+        		\hline
+        Tech Review Document rough draft is due. Alternative streaming program found that will work better, and it has support for OpenCV. & There is no motor or body for the aircraft yet. Project funding for competition travel should be sought out. & The aircraft will be created from salvaged parts from commercial versions, waiting on shipping. Individuals are encouraged to seek funding. \\
+		\hline
+         Technology Review is due. Class and meetings canceled due to the holidays. & Peer review by classmates on Tuesday. Rewrite and send the final draft of Technology Review. No meetings due to holidays. & IEEETran format should be reviewed for the Technology Review.\\
+		\hline
+         The multiplexer has arrived. Design Document is due. Progress Report is due Dec. 4th. & Design Document approved email needed by next week. & Research and test how to connect the Raspberry Pi Zero W to OpenCV.   \\
 
+<<<<<<< HEAD
 \section{Kaiyuan Fan's Report}
 
 
@@ -314,6 +350,11 @@ We have a video shows the flight capabilities of the aircraft due by 16 March 20
 
 
 
+=======
+        \hline
+            \end{tabular}
+\end{center}
+>>>>>>> 291499e5f89de5c461138993c5e22bdd3b971df0
 
 
 \end{document}
