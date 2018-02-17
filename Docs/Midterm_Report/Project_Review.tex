@@ -155,11 +155,161 @@ The solution to the delay in hardware has been to do as much programming beforeh
 
 \section{Yingshi Huang's Report}
 
+\subsection{Current Progress}
+The micro-helicopter has already selected all the hardware pieces of equipment which include two brush motors, a motor controller board, two ultrasonic sensors, a straightforward grasp motor, battery, a camera and the raspberry pi zero w. Our group has select every piece of the hardware considered by the weight of the micro-helicopter because of the rules of competition. All sections of the shell of the micro-helicopter are already stably combined which is 3D printed out and metal cut. And all the parts of the equipment have been mounted on the casing of the micro-helicopter. For the stabilization of driving of the micro-helicopter, our group design to add two equally square pieces at the tail of the micro-helicopter. Our group is still improving the better stabilization management of the whole micro-helicopter by moving the heavyweight parts of the micro-helicopter to the different place of micro-helicopter.
+With a better stabilization, the micro-helicopter can drive comfortable, and the mounted sensors and the mounted camera can provide more accurate data for autonomous detection and calculation. The camera of the micro-helicopter can connect to the raspberry pi zero w. And the network of the raspberry pi zero w can provide the real-time video via the steam video software from the camera to raspberry pi zero w and then sent to laptop or desktop. Our group is planning to use the footage to detect the assigned places like target location, pick up location and destination. For the footage analysis, OpenCV is an open and wired source. In the library, template recognition and color selection are useful tools to analyze the streaming video. Currently, our group can use real-time laptop camera to find the boundary of the competition field which is separated by the two color and rhombus shape of the tape.
+
+\subsection{Goals}
+Our goal is to design and deliver a remotely piloted micro-helicopter or remotely autonomous micro-helicopter. The micro-helicopter our squad designed will be used to compete in micro air vehicle American helicopter society student challenge. In the application, our team designed to drive the micro-helicopter autonomously. First, the micro-helicopter will be able to detect the boundary of the competition field which is yellow and black tape. Second, the micro-helicopter will be ready to start from the assigned starting point and then drive and cover to the selected target point. After picking up the envelope on the ground from the selected target point, the micro-helicopter will put the envelope to the drop point. At the end of the task, the micro-helicopter will fly to the destination. In the meantime of flying movement, the micro-helicopter will perceive the obstacle in the field and avoid them.
+
+\subsection{Problems \& Solutions}
+To connect the hardware of the micro-helicopter, the using of raspberry pi zero w pins are necessary. Our group has found the connection of the ultrasonic sensors with raspberry pi zero w. Previously, the old series of ultrasonic sensors on the micro-helicopter cannot connect to raspberry pi zero w. However, with the released documentation of new series of the ultrasonic sensors have improved the accession of the hardware. The new selected ultrasonic sensor can detect objects from 1-mm to 500-cm, and the precise range is from 30-cm to 5-meters, If the distance detection of the ultrasonic sensor is closer than 30-cm, the data will appear as 30-cm.
+In the project, our group still need to connect the remote controller and the raspberry pi zero w. The connection between ultrasonic sensors and raspberry pi zero w has to provide distance data for the calculations in the project. The motor controller also needs to be connected to the raspberry pi zero w. Our group is going to use the documentation of the hardware and then program the pins on raspberry pi zero w to send the data to the laptop to analyze.
+
+\subsection{GPIO}
+"General-purpose input/output (GPIO) is a generic pin on an integrated circuit or computer board." Our group has found the pin muxing of raspberry pi zero w on the documentation and reliable website. The aim of connecting pieces of the components is to customize the function of a GPIO pin on raspberry pi zero w for micro-helicopter. Every physical pin on the raspberry pi zero w has alternative functions. Some of the physical pins directly supplied high and no volts on the raspberry pi zero w. High volts is from 5v to 3.3v. On the raspberry pi zero w, there are two 5v pins and two 3.3v pins. The no volts which called ground pin occur eight pins on raspberry pi zero w.
+While programmers code for the customizes project, they need to decide which kind of number module they are going to apply on the computer board. There are two ways of numbering the IO pins on using computer board. The first numbering system is BOARD, and the second is BCM. The advantage of the first system is no rewired connection with the code and hardware. For the benefit of the second system is more precise circuit diagram for the design. In the code of the project, the numbering system can set as "GPIO.setmode(GPIO.BOARD)" or "GPIO.setmode(GPIO.BCM)." The programmer can use "mode = GPIO.getmode()" to confirm the numbering system.
+For the pins on the raspberry pi zero w, it is important to remember that pins can use as input as well as output. So secondary in the program is to set up the initial value. Assume the name of the initiated pin called channel so that "GPIO.setup(channel, GPIO.OUT, initial=GPIO.HIGH)". "GPIO.OUT" means data channel used as output value on raspberry pi zero w. "GPIO.HIGH" means data channel set to high volt on raspberry pi zero w. The other way to appear "GPIO.HIGH" is "1". At the end of the programming, simply use the command "GPIO.cleanup()" to clean up all the data and pins' memory on the raspberry pi zero w.The purpose of cleaning up the memory is to avoid any error in the next project to use the computer board.
+
+
+\subsection{Code}
+Here is the simple demo code \cite{r14} for set up and clean up.
+\begin{flushleft}
+import RPi.GPIO as GPIO
+\end{flushleft}
+\begin{flushleft}
+\#import time library is for the sleep method
+\end{flushleft}
+\begin{flushleft}
+import time
+\end{flushleft}
+\begin{flushleft}
+button = 8
+\end{flushleft}
+\begin{flushleft}
+\#set numbering mode for the program
+\end{flushleft}
+\begin{flushleft}
+GPIO.setmode(GPIO.BOARD)
+\end{flushleft}
+\begin{flushleft}
+\#setup button(pin8) as output pin
+\end{flushleft}
+\begin{flushleft}
+GPIO.setup(button, GPIO.OUT, initial = 0)
+\end{flushleft}
+\begin{flushleft}
+try:
+\end{flushleft}
+		\begin{flushleft}
+    \quad \#turn on and off the same button in every 5 second
+		\end{flushleft}
+		\begin{flushleft}
+    \quad while (True):
+		\end{flushleft}
+				\begin{flushleft}
+        \quad \quad \#turn on, set as HIGH or 1
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad GPIO.output(button, GPIO.HIGH)
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad print("ON")
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad time.sleep(5)
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad \#turn off, set as LOW or 0
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad GPIO.output(button, GPIO.LOW)
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad print("OFF")
+				\end{flushleft}
+				\begin{flushleft}
+				\quad \quad time.sleep(5)
+				\end{flushleft}
+\begin{flushleft}
+except KeyboardInterrupt:
+\end{flushleft}
+	\begin{flushleft}
+		\quad \#cleanup GPIO settings
+		\end{flushleft}
+		\begin{flushleft}
+		\quad GPIO.cleanup()
+		\end{flushleft}
+		\begin{flushleft}
+		\quad print("Exiting...")
+	\end{flushleft}
+
+
+
 
 
 
 
 \section{Kaiyuan Fan's Report}
+
+
+\subsection{Current Progress}
+
+
+In the past few weeks, I am working on the vehicle motor control part. The motor drives the flight of the helicopter. We will have two main coaxial blades and one rear blade on our helicopter which indicate there are three motors. Currently, I got one motor works by connecting it through motor control board L293D and a power module. All equipment and wirings are setting on a breadboard. Python has a package name “RPi.GPIO” to control Raspberry Pi GPIO channels. I implemented a python script by configuring four GPIO pins to control the DC motor. One GPIO pin is connected to the ground not actually act on the motor. One use for enabling and disabling the motor. Other two can act on changing the directions of the motor by setting the output signal level either high or low. Connecting Raspberry Pi to a Wi-Fi environment, I am able to change the rotation direction of the motor remotely. In Windows, for example, we can use Putty connect to the IP address of the Raspberry Pi then execute different codes.
+
+The current implementation of driving one DC motor is based on the hardware in hand. L293D only support two motors and wiring are setting on a breadboard. The actual motor controller board we are going to use, and wiring set up will be decided by EE team. Changing the rotation direction of the DC motor is being tested, speed changing by setting PWM frequency will be tested in the future. On-helicopter motor testing will be started once motors and motor controller being wired by the EE team.
+
+
+\subsection{Future Goals}
+
+
+\begin{enumerate}
+\item{Control three motors by the Raspberry Pi. Three motors need be able to run independently. }
+\item{My current implementation is setting on the breadboard, the real aircraft wirings need to be set up nicely to balance the weight and keep the functionality.}
+\item{Testing changes the PWM frequency to control the speed of the motor. Involving the speed relationship between two coaxial rotors to change the orientation of the helicopter.}
+\item{Our helicopter is using the battery as the power supply. I am using a power module now; the battery needs set up with electronic speed control for a stable output. }
+\item{Implementing manual flight mode, when helicopter receives the user input. Motors should be set to a certain mode. Specifically, when the aircraft was asked to perform takes off and hover, motors should rotate at the desired speed and keep the helicopter hover stably.}
+\item{Implementing a reliable searching pattern algorithm of the helicopter to effectively cover the whole search area and find the target.}
+\item{Implementing a reliable algorithm for the helicopter to avoid obstacles when the camera detects the obstacles.}
+\item{In the autonomous package delivery mission. Implementing a feature to save the path of the helicopter, more specific, save the transitions of the motors to find the return routes between home base and the target search area.}
+\end{enumerate}
+
+
+\subsection{Problems}
+
+
+The first problem is we don’t have our motors and motor controller wired on the helicopter. The hardware restricts testing the lifting, turning and further motor related actions of the helicopter.
+
+The second problem is “RPi.GPIO” is unsuitable for real-time or timing-critical applications. This is because we cannot predict when Python will be busy garbage collecting. It also runs under the Linux kernel which is not suitable for real-time applications; it is multitasking O/S and another process may be given priority over the CPU, causing jitter in our program.
+
+The third problem is there is a limited time remaining to implement the autonomous function and test the stability. We have around one month left to demonstrate the capabilities of vehicle autonomy and remote operation, including target tracking and package delivery.
+
+
+\subsection{Solutions}
+
+
+The solution of the first problem is to do as much as possible before the hardware available. We can collaborate with EE team to set up the electric circuits together. The coding portion of configuring Raspberry Pi’s GPIO pins is not hard. Setting PWM and pins output volts can be done once the circuit being constructed.
+
+For the second problem, even though Python is easier for coding. The performance of the motors needs further testing. If the motor is unstable in a real-time response. We could change the coding in C/C++, C has a library “WiringPi” can be using to access GPIO pins of the Raspberry Pi.
+
+To address the third problem, our big team are going to meet more often in the upcoming days. Individually, once I tested PWM frequency change control the speed of the motor in my hand. I will turn to work on making a GUI for user command communication and start to establish the target search pattern with my teammates.
+
+
+\subsection{Other Relevant Information about Project}
+
+
+There are many difficulties in the competition rules we can foresee: 
+\begin{enumerate}
+\item{Take off and steady-state hover based on the height level information that ultrasonic sensor given.}
+\item{Find the landing base by the camera and successful landing.}
+\item{Turning to the desired direction by setting different speeds of two coaxial rotors.}
+\item{Recognize the rectangle obstacle and avoid it during the package delivery mission.}
+\item{Recognize the first envelope, pick it up and drop to the target location. Pick the second envelope and return to the home base.}
+\end{enumerate}
+
+We have a video shows the flight capabilities of the aircraft due by 16 March 2018. Since we are choosing to establish an autonomous flight system, we must demonstrate the functionality of the autonomous flight. The whole project team will work more often together in the following month to hit the requirement of the competition.
+
 
 
 
