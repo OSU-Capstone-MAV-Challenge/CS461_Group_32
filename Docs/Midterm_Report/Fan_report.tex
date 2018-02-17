@@ -1,0 +1,46 @@
+\documentclass[letterpaper, 10, draftclsnofoot, onecolumn,compsoc]{IEEEtran}
+\begin{document}
+
+\section{Kaiyuan Fan's Report}
+\subsection{Current Progress}
+	In the past few weeks, I am working on the vehicle motor control part. The motor drives the flight of the helicopter. We will have two main coaxial blades and one rear blade on our helicopter which indicate there are three motors. Currently, I got one motor works by connecting it through motor control board L293D and a power module. All equipment and wirings are setting on a breadboard. Python has a package name “RPi.GPIO” to control Raspberry Pi GPIO channels. I implemented a python script by configuring four GPIO pins to control the DC motor. One GPIO pin is connected to the ground not actually act on the motor. One use for enabling and disabling the motor. Other two can act on changing the directions of the motor by setting the output signal level either high or low. Connecting Raspberry Pi to a Wi-Fi environment, I am able to change the rotation direction of the motor remotely. In Windows, for example, we can use Putty connect to the IP address of the Raspberry Pi then execute different codes.
+
+The current implementation of driving one DC motor is based on the hardware in hand. L293D only support two motors and wiring are setting on a breadboard. The actual motor controller board we are going to use, and wiring set up will be decided by EE team. Changing the rotation direction of the DC motor is being tested, speed changing by setting PWM frequency will be tested in the future. On-helicopter motor testing will be started once motors and motor controller being wired by the EE team.
+
+\subsection{Future Goals}
+\begin{enumerate}
+\item{Control three motors by the Raspberry Pi. Three motors need be able to run independently. }
+\item{My current implementation is setting on the breadboard, the real aircraft wirings need to be set up nicely to balance the weight and keep the functionality.}
+\item{Testing changes the PWM frequency to control the speed of the motor. Involving the speed relationship between two coaxial rotors to change the orientation of the helicopter.}
+\item{Our helicopter is using the battery as the power supply. I am using a power module now; the battery needs set up with electronic speed control for a stable output. }
+\item{Implementing manual flight mode, when helicopter receives the user input. Motors should be set to a certain mode. Specifically, when the aircraft was asked to perform takes off and hover, motors should rotate at the desired speed and keep the helicopter hover stably.}
+\item{Implementing a reliable searching pattern algorithm of the helicopter to effectively cover the whole search area and find the target.}
+\item{Implementing a reliable algorithm for the helicopter to avoid obstacles when the camera detects the obstacles.}
+\item{In the autonomous package delivery mission. Implementing a feature to save the path of the helicopter, more specific, save the transitions of the motors to find the return routes between home base and the target search area.}
+\end{enumerate}
+\subsection{Problems}
+The first problem is we don’t have our motors and motor controller wired on the helicopter. The hardware restricts testing the lifting, turning and further motor related actions of the helicopter.
+
+The second problem is “RPi.GPIO” is unsuitable for real-time or timing-critical applications. This is because we cannot predict when Python will be busy garbage collecting. It also runs under the Linux kernel which is not suitable for real-time applications; it is multitasking O/S and another process may be given priority over the CPU, causing jitter in our program.
+
+The third problem is there is a limited time remaining to implement the autonomous function and test the stability. We have around one month left to demonstrate the capabilities of vehicle autonomy and remote operation, including target tracking and package delivery.
+
+\subsection{Solutions}
+The solution of the first problem is to do as much as possible before the hardware available. We can collaborate with EE team to set up the electric circuits together. The coding portion of configuring Raspberry Pi’s GPIO pins is not hard. Setting PWM and pins output volts can be done once the circuit being constructed.
+
+For the second problem, even though Python is easier for coding. The performance of the motors needs further testing. If the motor is unstable in a real-time response. We could change the coding in C/C++, C has a library “WiringPi” can be using to access GPIO pins of the Raspberry Pi.
+
+To address the third problem, our big team are going to meet more often in the upcoming days. Individually, once I tested PWM frequency change control the speed of the motor in my hand. I will turn to work on making a GUI for user command communication and start to establish the target search pattern with my teammates.
+
+\subsection{Other Relevant Information about Project}
+There are many difficulties in the competition rules we can foresee: 
+\begin{enumerate}
+\item{Take off and steady-state hover based on the height level information that ultrasonic sensor given.}
+\item{Find the landing base by the camera and successful landing.}
+\item{Turning to the desired direction by setting different speeds of two coaxial rotors.}
+\item{Recognize the rectangle obstacle and avoid it during the package delivery mission.}
+\item{Recognize the first envelope, pick it up and drop to the target location. Pick the second envelope and return to the home base.}
+\end{enumerate}
+
+We have a video shows the flight capabilities of the aircraft due by 16 March 2018. Since we are choosing to establish an autonomous flight system, we must demonstrate the functionality of the autonomous flight. The whole project team will work more often together in the following month to hit the requirement of the competition.
+\end{document}
