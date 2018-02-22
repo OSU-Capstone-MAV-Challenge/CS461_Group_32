@@ -16,15 +16,10 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <opencv/cv.h>
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <objective.h>
-using namespace cv;
+#include <vector>
 using namespace std;
 
 
@@ -94,11 +89,13 @@ void createTrackbars(){
 
 
 }
-void drawObject(objective Target,Mat &frame){
+void drawObject(vector<objective> Targets,Mat &frame){
 
-	cv::circle(frame,cv::Point(Target.getxPos(),Target.getyPos()),10,cv::Scalar(0,0,255));
-	cv::putText(frame,intToString(Target.getxPos())+ " , " + intToString(Target.getyPos()),cv::Point(Target.getxPos(),Target.getyPos()+20),1,1,Scalar(0,255,0));
-
+	for(int i = 0; i < Targets.size(); i++){
+		cv::circle(frame,cv::Point(Targets.at(i).getxPos(),Targets.at(i).getyPos()),10,cv::Scalar(0,0,255));
+		cv::putText(frame,intToString(Targets.at(i).getxPos())+ " , " + intToString(Targets.at(i).getyPos()),cv::Point(Targets.at(i).getxPos(),Targets.at(i).getyPos()+20),1,1,Scalar(0,255,0));
+	}
+	
 }
 void morphOps(Mat &thresh){
 
@@ -121,7 +118,7 @@ void morphOps(Mat &thresh){
 }
 void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 	
-	objective border;
+	vector <objective> borders;
 
 	Mat temp;
 	threshold.copyTo(temp);
@@ -147,9 +144,13 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 				//we only want the object with the largest area so we safe a reference area each
 				//iteration and compare it to the area in the next iteration.
 				if(area>MIN_OBJECT_AREA){
+					
+					objective border;
+					
 					border.setxPos(moment.m10/area);
 					border.setyPos(moment.m01/area);
 
+					borders.pushback(border);
 
 					objectFound = true;
 
@@ -160,7 +161,7 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 			//let user know you found an object
 			if(objectFound ==true){
 				//draw object location on screen
-				drawObject(border,cameraFeed);}
+				drawObject(borders,cameraFeed);}
 
 		}else putText(cameraFeed,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
 	}
@@ -169,7 +170,7 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
-	bool calibrationMode = true;
+	bool calibrationMode = false;
 	
 	//Matrix to store each frame of the webcam feed
 	Mat cameraFeed;
@@ -202,6 +203,29 @@ int main(int argc, char* argv[])
 		morphOps(threshold);
 		imshow(windowName2,threshold);
 		trackFilteredObject(threshold,HSV,cameraFeed);
+		}
+		else{
+			objective border; // landing, dropoff;
+			
+			//8:00 - start here
+			
+		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
+		morphOps(threshold);
+		trackFilteredObject(threshold,HSV,cameraFeed);	
+		
+		/*
+		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		inRange(HSV,landing.getHSVmin(),landing.getHSVmax(),threshold);
+		morphOps(threshold);
+		trackFilteredObject(threshold,HSV,cameraFeed);	
+		
+		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		inRange(HSV,dropoff.getHSVmin(),dropoff.getHSVmax(),threshold);
+		morphOps(threshold);
+		trackFilteredObject(threshold,HSV,cameraFeed);	
+		*/
+			
 		}
 
 		//show frames 
