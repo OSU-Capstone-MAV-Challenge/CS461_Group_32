@@ -38,7 +38,7 @@ const int FRAME_HEIGHT = 480;
 //max number of objects to be detected in frame
 const int MAX_NUM_OBJECTS=50;
 //minimum and maximum object area
-const int MIN_OBJECT_AREA = 40*40;
+const int MIN_OBJECT_AREA = 20*20;
 const int MAX_OBJECT_AREA = FRAME_HEIGHT*FRAME_WIDTH/1.5;
 //names that will appear at the top of each window
 const string windowName = "Original Image";
@@ -49,12 +49,9 @@ const string trackbarWindowName = "Trackbars";
 void on_trackbar( int, void* )
 {//This function gets called whenever a
 	// trackbar position is changed
-
-
-
-
-
 }
+
+
 string intToString(int number){
 
 
@@ -62,10 +59,10 @@ string intToString(int number){
 	ss << number;
 	return ss.str();
 }
+
+
 void createTrackbars(){
 	//create window for trackbars
-
-
 	namedWindow(trackbarWindowName,0);
 	//create memory to store trackbar name on window
 	char TrackbarName[50];
@@ -86,17 +83,19 @@ void createTrackbars(){
 	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar );
 	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar );
 	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar );
-
-
 }
-void drawObject(vector<objective> Targets,Mat &frame){
 
+
+void drawObject(vector<objective> Targets,Mat &frame){
 	for(int i = 0; i < Targets.size(); i++){
 		cv::circle(frame,cv::Point(Targets.at(i).getxPos(),Targets.at(i).getyPos()),10,cv::Scalar(0,0,255));
 		cv::putText(frame,intToString(Targets.at(i).getxPos())+ " , " + intToString(Targets.at(i).getyPos()),cv::Point(Targets.at(i).getxPos(),Targets.at(i).getyPos()+20),1,1,Scalar(0,255,0));
+		cv::putText(frame, Targets.at(i).getType(), cv::Point(Targets.at(i).getxPos(),Targets.at(i).getyPos()-20),1,2,Targets.at(i).getColor());
 	}
 	
 }
+
+
 void morphOps(Mat &thresh){
 
 	//create structuring element that will be used to "dilate" and "erode" image.
@@ -109,14 +108,62 @@ void morphOps(Mat &thresh){
 	erode(thresh,thresh,erodeElement);
 	erode(thresh,thresh,erodeElement);
 
-
 	dilate(thresh,thresh,dilateElement);
 	dilate(thresh,thresh,dilateElement);
-
-
-
 }
+
+
 void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
+	
+	vector <objective> borders;
+	Mat temp;
+	threshold.copyTo(temp);
+	//these two vectors needed for output of findContours
+	vector< vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+	//find contours of filtered image using openCV findContours function
+	findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
+	//use moments method to find our filtered object
+	double refArea = 0;
+	bool objectFound = false;
+	if (hierarchy.size() > 0) {
+		int numObjects = hierarchy.size();
+		//if number of objects greater than MAX_NUM_OBJECTS we have a noisy filter
+		if(numObjects<MAX_NUM_OBJECTS){
+			for (int index = 0; index >= 0; index = hierarchy[index][0]) {
+
+				Moments moment = moments((cv::Mat)contours[index]);
+				double area = moment.m00;
+
+				//if the area is less than 20 px by 20px then it is probably just noise
+				//if the area is the same as the 3/2 of the image size, probably just a bad filter
+				//we only want the object with the largest area so we safe a reference area each
+				//iteration and compare it to the area in the next iteration.
+				if(area>MIN_OBJECT_AREA){
+					
+					objective border;
+					
+					border.setxPos(moment.m10/area);
+					border.setyPos(moment.m01/area);
+
+					borders.push_back(border);
+
+					objectFound = true;
+
+				}else objectFound = false;
+
+
+			}
+			//let user know you found an object
+			if(objectFound ==true){
+				//draw object location on screen
+				drawObject(borders,cameraFeed);}
+		}else putText(cameraFeed,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
+	}
+}
+
+
+void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed){
 	
 	vector <objective> borders;
 
@@ -149,8 +196,10 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 					
 					border.setxPos(moment.m10/area);
 					border.setyPos(moment.m01/area);
+					border.setType(Targets.getType());
+					border.setColor(Targets.getColor());
 
-					borders.pushback(border);
+					borders.push_back(border);
 
 					objectFound = true;
 
@@ -166,6 +215,17 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 		}else putText(cameraFeed,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
 	}
 }
+
+
+
+
+
+
+
+
+//*********************************************************************
+
+
 
 int main(int argc, char* argv[])
 {
@@ -205,14 +265,15 @@ int main(int argc, char* argv[])
 		trackFilteredObject(threshold,HSV,cameraFeed);
 		}
 		else{
-			objective border; // landing, dropoff;
+			objective border("Border"); // landing, dropoff;
 			
-			//8:00 - start here
+			
+			//Uncomment + duplicate for more objects.
 			
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
 		morphOps(threshold);
-		trackFilteredObject(threshold,HSV,cameraFeed);	
+		trackFilteredObject(border, threshold,HSV,cameraFeed);	
 		
 		/*
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);

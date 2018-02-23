@@ -6,6 +6,18 @@ objective::objective(void){
 objective::~objective(void){
 }
 
+objective::objective(string name){ //Duplicate this for more objects
+	setType(name);
+	if( name == "Border" ){
+			setHSVmin(Scalar(14,164,121));
+			setHSVmax(Scalar(186,237,180));
+			setColor(Scalar(0,250,250));
+	}
+	
+	
+}
+
+
 int objective::getxPos(){
 	 return objective::xPos;
 }
