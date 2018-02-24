@@ -27,6 +27,9 @@ install:
 clean:
 	[ ! -f _build/Makefile ] || make -C _build clean
 	rm -f mjpg_streamer *.so
+	
+run:
+	./mjpg_streamer -i "input_raspicam.so -x 1280 -y 720 -fps 15" -o "output_http.so"
 
 distclean: clean
 	rm -rf _build

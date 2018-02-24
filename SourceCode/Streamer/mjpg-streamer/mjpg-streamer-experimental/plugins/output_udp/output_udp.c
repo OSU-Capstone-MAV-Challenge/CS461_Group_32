@@ -64,7 +64,7 @@ static char *command = NULL;
 static int input_number = 0;
 
 // UDP port
-static int port = 0;
+static int port = 2525;
 
 /******************************************************************************
 Description.: print a help message
