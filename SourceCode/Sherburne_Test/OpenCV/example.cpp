@@ -20,18 +20,19 @@
 #include <stdlib.h>
 #include <objective.h>
 #include <vector>
+#include <thread>
 using namespace std;
 
 
 using namespace cv;
 //initial min and max HSV filter values.
 //these will be changed using trackbars
-int H_MIN = 0;
-int H_MAX = 256;
-int S_MIN = 0;
-int S_MAX = 256;
-int V_MIN = 0;
-int V_MAX = 256;
+int H_MIN = 0, H_MAX = 256;
+int S_MIN = 0, S_MAX = 256;
+int V_MIN = 0, V_MAX = 256;
+int Border_H_MIN = 0, Border_H_MAX = 256;
+int Border_S_MIN = 0, Border_S_MAX = 256;
+int Border_V_MIN = 0, Border_V_MAX = 256;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -44,7 +45,6 @@ const int MAX_OBJECT_AREA = FRAME_HEIGHT*FRAME_WIDTH/1.5;
 const string windowName = "Original Image";
 const string windowName1 = "HSV Image";
 const string windowName2 = "Thresholded Image";
-const string windowName3 = "After Morphological Operations";
 const string trackbarWindowName = "Trackbars";
 void on_trackbar( int, void* )
 {//This function gets called whenever a
@@ -65,24 +65,40 @@ void createTrackbars(){
 	//create window for trackbars
 	namedWindow(trackbarWindowName,0);
 	//create memory to store trackbar name on window
-	char TrackbarName[50];
-	sprintf( TrackbarName, "H_MIN", H_MIN);
-	sprintf( TrackbarName, "H_MAX", H_MAX);
-	sprintf( TrackbarName, "S_MIN", S_MIN);
-	sprintf( TrackbarName, "S_MAX", S_MAX);
-	sprintf( TrackbarName, "V_MIN", V_MIN);
-	sprintf( TrackbarName, "V_MAX", V_MAX);
+	//char TrackbarName[50];
+	//sprintf( TrackbarName, "H_MIN", H_MIN);
+	//sprintf( TrackbarName, "H_MAX", H_MAX);
+	//sprintf( TrackbarName, "S_MIN", S_MIN);
+	//sprintf( TrackbarName, "S_MAX", S_MAX);
+	//sprintf( TrackbarName, "V_MIN", V_MIN);
+	//sprintf( TrackbarName, "V_MAX", V_MAX);
 	//create trackbars and insert them into window
 	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
 	//the max value the trackbar can move (eg. H_HIGH), 
 	//and the function that is called whenever the trackbar is moved(eg. on_trackbar)
 	//                                  ---->    ---->     ---->      
+	createTrackbar( "Border_H_MIN", trackbarWindowName, &Border_H_MIN, Border_H_MAX, on_trackbar );
+	createTrackbar( "Border_H_MAX", trackbarWindowName, &Border_H_MAX, Border_H_MAX, on_trackbar );
+	createTrackbar( "Border_S_MIN", trackbarWindowName, &Border_S_MIN, Border_S_MAX, on_trackbar );
+	createTrackbar( "Border_S_MAX", trackbarWindowName, &Border_S_MAX, Border_S_MAX, on_trackbar );
+	createTrackbar( "Border_V_MIN", trackbarWindowName, &Border_V_MIN, Border_V_MAX, on_trackbar );
+	createTrackbar( "Border_V_MAX", trackbarWindowName, &Border_V_MAX, Border_V_MAX, on_trackbar );
+	
 	createTrackbar( "H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar );
 	createTrackbar( "H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar );
 	createTrackbar( "S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar );
 	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar );
 	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar );
 	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar );
+	
+	/*
+	createTrackbar( "H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar );
+	createTrackbar( "H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar );
+	createTrackbar( "S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar );
+	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar );
+	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar );
+	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar );
+	*/
 }
 
 
@@ -165,7 +181,7 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 
 void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed){
 	
-	vector <objective> borders;
+	vector <objective> objects;
 
 	Mat temp;
 	threshold.copyTo(temp);
@@ -192,14 +208,14 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 				//iteration and compare it to the area in the next iteration.
 				if(area>MIN_OBJECT_AREA){
 					
-					objective border;
+					objective object;
 					
-					border.setxPos(moment.m10/area);
-					border.setyPos(moment.m01/area);
-					border.setType(Targets.getType());
-					border.setColor(Targets.getColor());
+					object.setxPos(moment.m10/area);
+					object.setyPos(moment.m01/area);
+					object.setType(Targets.getType());
+					object.setColor(Targets.getColor());
 
-					borders.push_back(border);
+					objects.push_back(object);
 
 					objectFound = true;
 
@@ -210,16 +226,19 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 			//let user know you found an object
 			if(objectFound ==true){
 				//draw object location on screen
-				drawObject(borders,cameraFeed);}
+				drawObject(objects,cameraFeed);}
 
 		}else putText(cameraFeed,"TOO MUCH NOISE! ADJUST FILTER",Point(0,50),1,2,Scalar(0,0,255),2);
 	}
 }
 
 
-
-
-
+/*
+void Calculations(){
+	
+	
+}
+*/
 
 
 
@@ -230,21 +249,35 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
-	bool calibrationMode = false;
+	bool calibrationMode = true;
+	bool webcammode = true;
+	
+	
+//s	std::thread Robotic (Calculations);
+	
 	
 	//Matrix to store each frame of the webcam feed
 	Mat cameraFeed;
 	Mat threshold;
 	Mat HSV;
+	string address;
 
-	if(calibrationMode){
-		//create slider bars for HSV filtering
+	
+	if(calibrationMode){		//create slider bars for HSV filtering
 		createTrackbars();
 	}
 	//video capture object to acquire webcam feed
 	VideoCapture capture;
-	//open capture object at location zero (default location for webcam)
-	capture.open("http://192.168.1.146:8080/?action=stream?dummy=param.mjpg");
+	if(webcammode){
+			//open capture object at location zero (default location for webcam)
+			capture.open(0);
+	}
+	else{
+	cout << "Please input the Remote IP address: ";
+	cin >> address;
+	capture.open("http://" + address + ":8080/?action=stream");
+	}	
+	
 	//set height and width of capture frame
 	capture.set(CV_CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT,FRAME_HEIGHT);
@@ -265,8 +298,8 @@ int main(int argc, char* argv[])
 		trackFilteredObject(threshold,HSV,cameraFeed);
 		}
 		else{
-			objective border("Border"); // landing, dropoff;
-			
+			objective border("Border");	// dropoff;
+			objective delivery("Delivery");
 			
 			//Uncomment + duplicate for more objects.
 			
@@ -275,12 +308,12 @@ int main(int argc, char* argv[])
 		morphOps(threshold);
 		trackFilteredObject(border, threshold,HSV,cameraFeed);	
 		
-		/*
-		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		inRange(HSV,landing.getHSVmin(),landing.getHSVmax(),threshold);
-		morphOps(threshold);
-		trackFilteredObject(threshold,HSV,cameraFeed);	
 		
+		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		inRange(HSV,delivery.getHSVmin(),delivery.getHSVmax(),threshold);
+		morphOps(threshold);
+		trackFilteredObject(delivery, threshold,HSV,cameraFeed);	
+		/*
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		inRange(HSV,dropoff.getHSVmin(),dropoff.getHSVmax(),threshold);
 		morphOps(threshold);
@@ -289,19 +322,16 @@ int main(int argc, char* argv[])
 			
 		}
 
-		//show frames 
-		//imshow(windowName2,threshold);
-
 		imshow(windowName,cameraFeed);
-		//imshow(windowName1,HSV);
-
 
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
 		waitKey(30);
 	}
-
+	
 	return 0;
 }
+
+
 
 
