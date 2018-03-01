@@ -9,6 +9,18 @@
 using namespace cv;
 using namespace std;
 
+int H_MIN = 0, S_MIN = 0, V_MIN = 0; 
+int H_MAX = 256, S_MAX = 256, V_MAX = 256;
+int BorderH_MIN = 0, BorderS_MIN = 0, BorderV_MIN = 0; 
+int BorderH_MAX = 256, BorderS_MAX = 256, BorderV_MAX = 256;
+int DelivH_MIN = 0, DelivS_MIN = 0, DelivV_MIN = 0; 
+int DelivH_MAX = 256, DelivS_MAX = 256, DelivV_MAX = 256;
+int BlH_MIN = 0, BlS_MIN = 0, BlV_MIN = 0; 
+int BlH_MAX = 256, BlS_MAX = 256, BlV_MAX = 256;
+int MAX = 256;
+int Bordertoggle = 0;
+int Delivtoggle = 0;
+int Blacktoggle = 0;
 
 class objective{
 public:

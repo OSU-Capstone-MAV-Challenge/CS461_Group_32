@@ -27,12 +27,6 @@ using namespace std;
 using namespace cv;
 //initial min and max HSV filter values.
 //these will be changed using trackbars
-int H_MIN = 0, H_MAX = 256;
-int S_MIN = 0, S_MAX = 256;
-int V_MIN = 0, V_MAX = 256;
-int Border_H_MIN = 0, Border_H_MAX = 256;
-int Border_S_MIN = 0, Border_S_MAX = 256;
-int Border_V_MIN = 0, Border_V_MAX = 256;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -61,6 +55,60 @@ string intToString(int number){
 }
 
 
+void BorderHSVFunct(int, void*){
+	if(Bordertoggle == 0){
+		BorderH_MIN = H_MIN;
+		BorderH_MAX = H_MAX;
+		BorderS_MIN = S_MIN;
+		BorderS_MAX = S_MAX;
+		BorderV_MIN = V_MIN;
+		BorderV_MAX = V_MAX;
+		H_MIN = 0;
+		H_MAX = 256;
+		S_MIN = 0; 
+		S_MAX = 256;
+		V_MIN = 0; 
+		V_MAX = 256;
+		Bordertoggle = 1;	
+	}
+}
+
+void DelivHSVFunct(int, void*){
+	if(Delivtoggle == 0){
+		DelivH_MIN = H_MIN;
+		DelivH_MAX = H_MAX;
+		DelivS_MIN = S_MIN;
+		DelivS_MAX = S_MAX;
+		DelivV_MIN = V_MIN;
+		DelivV_MAX = V_MAX;
+		H_MIN = 0;
+		H_MAX = 256;
+		S_MIN = 0; 
+		S_MAX = 256;
+		V_MIN = 0; 
+		V_MAX = 256;
+		Delivtoggle = 1;
+	}
+}
+void BlHSVFunct(int, void*){
+if(Blacktoggle == 0){
+		BlH_MIN = H_MIN;
+		BlH_MAX = H_MAX;
+		BlS_MIN = S_MIN;
+		BlS_MAX = S_MAX;
+		BlV_MIN = V_MIN;
+		BlV_MAX = V_MAX;
+		H_MIN = 0;
+		H_MAX = 256;
+		S_MIN = 0; 
+		S_MAX = 256;
+		V_MIN = 0; 
+		V_MAX = 256;
+		Blacktoggle = 1;
+	}
+}
+
+
 void createTrackbars(){
 	//create window for trackbars
 	namedWindow(trackbarWindowName,0);
@@ -77,30 +125,20 @@ void createTrackbars(){
 	//the max value the trackbar can move (eg. H_HIGH), 
 	//and the function that is called whenever the trackbar is moved(eg. on_trackbar)
 	//                                  ---->    ---->     ---->      
-	createTrackbar( "Border_H_MIN", trackbarWindowName, &Border_H_MIN, Border_H_MAX, on_trackbar );
-	createTrackbar( "Border_H_MAX", trackbarWindowName, &Border_H_MAX, Border_H_MAX, on_trackbar );
-	createTrackbar( "Border_S_MIN", trackbarWindowName, &Border_S_MIN, Border_S_MAX, on_trackbar );
-	createTrackbar( "Border_S_MAX", trackbarWindowName, &Border_S_MAX, Border_S_MAX, on_trackbar );
-	createTrackbar( "Border_V_MIN", trackbarWindowName, &Border_V_MIN, Border_V_MAX, on_trackbar );
-	createTrackbar( "Border_V_MAX", trackbarWindowName, &Border_V_MAX, Border_V_MAX, on_trackbar );
 	
-	createTrackbar( "H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar );
-	createTrackbar( "H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar );
-	createTrackbar( "S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar );
-	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar );
-	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar );
-	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar );
+	createTrackbar( "H_MIN", trackbarWindowName, &H_MIN, MAX, on_trackbar );
+	createTrackbar( "H_MAX", trackbarWindowName, &H_MAX, MAX, on_trackbar );
+	createTrackbar( "S_MIN", trackbarWindowName, &S_MIN, MAX, on_trackbar );
+	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, MAX, on_trackbar );
+	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, MAX, on_trackbar );
+	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, MAX, on_trackbar );
 	
-	/*
-	createTrackbar( "H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar );
-	createTrackbar( "H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar );
-	createTrackbar( "S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar );
-	createTrackbar( "S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar );
-	createTrackbar( "V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar );
-	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar );
-	*/
+	
+	createTrackbar( "Set Border", trackbarWindowName, &Bordertoggle, 1, BorderHSVFunct);
+	createTrackbar( "Set Red Target", trackbarWindowName, &Delivtoggle, 1, DelivHSVFunct);
+	createTrackbar( "Set Black Target", trackbarWindowName, &Blacktoggle, 1, BlHSVFunct);
+	
 }
-
 
 void drawObject(vector<objective> Targets,Mat &frame){
 	for(int i = 0; i < Targets.size(); i++){
@@ -113,17 +151,13 @@ void drawObject(vector<objective> Targets,Mat &frame){
 
 
 void morphOps(Mat &thresh){
-
 	//create structuring element that will be used to "dilate" and "erode" image.
 	//the element chosen here is a 3px by 3px rectangle
-
 	Mat erodeElement = getStructuringElement( MORPH_RECT,Size(3,3));
 	//dilate with larger element so make sure object is nicely visible
 	Mat dilateElement = getStructuringElement( MORPH_RECT,Size(8,8));
-
 	erode(thresh,thresh,erodeElement);
 	erode(thresh,thresh,erodeElement);
-
 	dilate(thresh,thresh,dilateElement);
 	dilate(thresh,thresh,dilateElement);
 }
@@ -249,8 +283,8 @@ void Calculations(){
 int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
-	bool calibrationMode = true;
-	bool webcammode = true;
+	bool calibrationMode = false;
+	bool webcammode = false;
 	
 	
 //s	std::thread Robotic (Calculations);
