@@ -21,6 +21,20 @@
 #include <objective.h>
 #include <vector>
 #include <thread>
+int H_MIN = 0, S_MIN = 0, V_MIN = 0; 
+int H_MAX = 256, S_MAX = 256, V_MAX = 256;
+int BorderH_MIN = 0, BorderS_MIN = 0, BorderV_MIN = 0; 
+int BorderH_MAX = 256, BorderS_MAX = 256, BorderV_MAX = 256;
+int DelivH_MIN = 0, DelivS_MIN = 0, DelivV_MIN = 0; 
+int DelivH_MAX = 256, DelivS_MAX = 256, DelivV_MAX = 256;
+int BlH_MIN = 0, BlS_MIN = 0, BlV_MIN = 0; 
+int BlH_MAX = 256, BlS_MAX = 256, BlV_MAX = 256;
+int MAX = 256;
+int Bordertoggle = 0;
+int Delivtoggle = 0;
+int Blacktoggle = 0;
+int Cali = 0;
+int setter = 1;
 using namespace std;
 
 
@@ -56,7 +70,6 @@ string intToString(int number){
 
 
 void BorderHSVFunct(int, void*){
-	if(Bordertoggle == 0){
 		BorderH_MIN = H_MIN;
 		BorderH_MAX = H_MAX;
 		BorderS_MIN = S_MIN;
@@ -69,12 +82,9 @@ void BorderHSVFunct(int, void*){
 		S_MAX = 256;
 		V_MIN = 0; 
 		V_MAX = 256;
-		Bordertoggle = 1;	
-	}
 }
 
 void DelivHSVFunct(int, void*){
-	if(Delivtoggle == 0){
 		DelivH_MIN = H_MIN;
 		DelivH_MAX = H_MAX;
 		DelivS_MIN = S_MIN;
@@ -87,11 +97,8 @@ void DelivHSVFunct(int, void*){
 		S_MAX = 256;
 		V_MIN = 0; 
 		V_MAX = 256;
-		Delivtoggle = 1;
-	}
 }
 void BlHSVFunct(int, void*){
-if(Blacktoggle == 0){
 		BlH_MIN = H_MIN;
 		BlH_MAX = H_MAX;
 		BlS_MIN = S_MIN;
@@ -104,8 +111,6 @@ if(Blacktoggle == 0){
 		S_MAX = 256;
 		V_MIN = 0; 
 		V_MAX = 256;
-		Blacktoggle = 1;
-	}
 }
 
 
@@ -134,9 +139,10 @@ void createTrackbars(){
 	createTrackbar( "V_MAX", trackbarWindowName, &V_MAX, MAX, on_trackbar );
 	
 	
-	createTrackbar( "Set Border", trackbarWindowName, &Bordertoggle, 1, BorderHSVFunct);
-	createTrackbar( "Set Red Target", trackbarWindowName, &Delivtoggle, 1, DelivHSVFunct);
-	createTrackbar( "Set Black Target", trackbarWindowName, &Blacktoggle, 1, BlHSVFunct);
+	createTrackbar( "Set Border", trackbarWindowName, &Bordertoggle, setter, BorderHSVFunct);
+	createTrackbar( "Set Red Target", trackbarWindowName, &Delivtoggle, setter, DelivHSVFunct);
+	createTrackbar( "Set Black Target", trackbarWindowName, &Blacktoggle, setter, BlHSVFunct);
+	createTrackbar( "Hide Calibration", trackbarWindowName, &Cali, setter, on_trackbar);
 	
 }
 
@@ -284,8 +290,7 @@ int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
 	bool calibrationMode = false;
-	bool webcammode = false;
-	
+	bool webcammode = true;
 	
 //s	std::thread Robotic (Calculations);
 	
@@ -294,12 +299,12 @@ int main(int argc, char* argv[])
 	Mat cameraFeed;
 	Mat threshold;
 	Mat HSV;
+	UMat HM(threshold.rows, (threshold.cols+cameraFeed.cols), CV_8U);
 	string address;
 
 	
-	if(calibrationMode){		//create slider bars for HSV filtering
-		createTrackbars();
-	}
+	createTrackbars();
+	
 	//video capture object to acquire webcam feed
 	VideoCapture capture;
 	if(webcammode){
@@ -322,40 +327,53 @@ int main(int argc, char* argv[])
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-
-		if(calibrationMode==true){
+		if(Cali == 0){
 		//if in calibration mode, we track objects based on the HSV slider values.
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
 		morphOps(threshold);
 		imshow(windowName2,threshold);
 		trackFilteredObject(threshold,HSV,cameraFeed);
+		}else if(Cali == 1 && calibrationMode == false){
+			destroyWindow(trackbarWindowName);
+			destroyWindow(windowName2);
+			calibrationMode = true;
 		}
-		else{
+		
 			objective border("Border");	// dropoff;
 			objective delivery("Delivery");
 			
 			//Uncomment + duplicate for more objects.
 			
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		if(Bordertoggle == 1){	
+		inRange(HSV,Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN),Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX),threshold);
+		}else{
 		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
+		}
 		morphOps(threshold);
 		trackFilteredObject(border, threshold,HSV,cameraFeed);	
 		
 		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+		if(Delivtoggle == 1){	
+		inRange(HSV,Scalar(DelivH_MIN,DelivS_MIN,DelivV_MIN),Scalar(DelivH_MAX,DelivS_MAX,DelivV_MAX),threshold);
+		}else{
 		inRange(HSV,delivery.getHSVmin(),delivery.getHSVmax(),threshold);
+		}
 		morphOps(threshold);
 		trackFilteredObject(delivery, threshold,HSV,cameraFeed);	
 		/*
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		inRange(HSV,dropoff.getHSVmin(),dropoff.getHSVmax(),threshold);
+		if(Blacktoggle == 1){	
+		inRange(HSV,Scalar(BlH_MIN,BlS_MIN,BlV_MIN),Scalar(BlH_MAX,BlS_MAX,BlV_MAX),threshold);
+		}else{
+		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
+		}
 		morphOps(threshold);
 		trackFilteredObject(threshold,HSV,cameraFeed);	
 		*/
 			
-		}
-
 		imshow(windowName,cameraFeed);
 
 		//delay 30ms so that screen can refresh.

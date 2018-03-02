@@ -41,25 +41,11 @@ void objective::setyPos(int y){
 }
 
 Scalar objective::getHSVmin(){
-	if(borderToggle == 1 && name == "Border"){
-		return Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN);
-	}else if(DelivToggle == 1 && name == "Delivery"){
-		return Scalar(DelivH_MIN,DelivS_MIN,DelivV_MIN);
-	}else if(BlackToggle == 1 && name == "Black"){
-		return Scalar(BlH_MIN,BlS_MIN,BlV_MIN);
-	}else
 	return HSVmin;
 }
 
 
 Scalar objective::getHSVmax(){
-	if(borderToggle == 1 && name == "Border"){
-		return Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX);
-	}else if(DelivToggle == 1 && name == "Delivery"){
-		return Scalar(DelivH_MAX,DelivS_MAX,DelivV_MAX);
-	}else if(BlackToggle == 1 && name == "Black"){
-		return Scalar(BlH_MAX,BlS_MAX,BlV_MAX);
-	}else
 	return HSVmax;
 }
 	
