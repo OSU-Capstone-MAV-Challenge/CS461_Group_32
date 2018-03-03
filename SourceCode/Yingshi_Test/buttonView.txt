@@ -1,0 +1,21 @@
+
+Axis 0  LeftStick       Left-   Right+ 
+Axis 1  LeftStick       Up-     Down+ 
+Axis 2  LeftTrigger     -to+ 
+Axis 3  RightStick      Left-   Right+ 
+Axis 4  RightStick      Up-     Down+ 
+Axis 5  RightTrigger    -to+ 
+Axis 6  DirectionPad    Left-   Right+ 
+Axis 7  DirectionPad    Up-     Down+ 
+
+Button 8        Xbox Button
+Button 7        Menu Button 
+Button 6        View Button 
+Button 5        RightBrumper 
+Buttom 4        LeftBrumper 
+Button 3        Y Button 
+Button 2        X Button 
+Button 1        B Button 
+Button 0        A Button 
+
+
