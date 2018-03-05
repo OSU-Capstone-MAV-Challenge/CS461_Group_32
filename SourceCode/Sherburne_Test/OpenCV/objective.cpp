@@ -16,7 +16,7 @@ objective::objective(string name){ //Duplicate this for more objects
 	if( name == "Delivery" ){
 			setHSVmin(Scalar(160,255,255));
 			setHSVmax(Scalar(197,255,255));
-			setColor(Scalar(0,250,250));
+			setColor(Scalar(0,0,250));
 	}
 	
 	

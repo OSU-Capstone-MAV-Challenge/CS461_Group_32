@@ -33,6 +33,8 @@ int MAX = 256;
 int Bordertoggle = 0;
 int Delivtoggle = 0;
 int Blacktoggle = 0;
+int Kill = 0;
+int Autonomous = 0;
 int Cali = 0;
 int setter = 1;
 using namespace std;
@@ -375,6 +377,8 @@ int main(int argc, char* argv[])
 		*/
 			
 		imshow(windowName,cameraFeed);
+		createTrackbar( "Autonomous", windowName, &Autonomous, setter, on_trackbar );
+		createTrackbar( "Kill", windowName, &Kill, setter, on_trackbar );
 
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
