@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Beaverhawk Base Station</title>
+    <div align="center"> <h1>Beaverhawk Base Station</h1>
+    </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    function go(k){
+        $.post('/', { k: k }, function () { });
+    }
+    $(function(){
+        window.document.onkeydown = abc
+        function abc(env){
+            env = (env) ? env : window.event;
+            if(env.keyCode=='87'){
+                go('w');
+            }
+            if(env.keyCode=='83'){
+                go('s');
+            }
+            if(env.keyCode=='65'){
+                go('a');
+            }
+            if(env.keyCode=='68'){
+                go('d');
+            }
+            if(env.keyCode=='81'){
+                go('q');
+            }
+            if(env.keyCode=='69'){
+                go('e');
+            }
+            if(env.keyCode=='80'){
+                go('p');
+            }
+            if (env.keyCode == '73') {
+                go('i');
+            }
+        };
+    });
+        $(document).ready(function () {
+            $("#Forward").mousedown(function () {
+                    go('w');
+            });
+            $("#Left").mousedown(function () {
+                    go('a');
+            });
+            $("#Right").mousedown(function () {
+                    go('d');
+            });
+            $("#Backward").mousedown(function () {
+                    go('s');
+            });
+            $("#Up").mousedown(function () {
+                    go('q');
+            });
+            $("#Down").mousedown(function () {
+                    go('e');
+            });
+            $('#Cut').mousedown(function () {
+                go('p');
+            });
+            $('#Init').mousedown(function () {
+                go('i');
+            });
+        });
+</script>
+<div align="center" id="main">
+    <h3>Manual Mode:</h3> 
+    <button id="Init"><h3>I-Initalize and Take off</h3></button>
+    <br>
+    <button id="Forward"><h3>W-forward</h3></button>
+    <button id="Backward"><h3>S-backward</h3></button>
+    <br>
+    <button id = "Left"><h3>A-left</h3></button>
+    <button id = "Right"><h3>D-right</h3></button>
+    <br>
+    <button id="Up"><h3>Q-up</h3></button>
+    <button id="Down"><h3>E-down</h3></button>
+    <br>
+    <button id="Cut"><h3>P-cut off</h3></button>
+</div>
+</body>
+</html>
