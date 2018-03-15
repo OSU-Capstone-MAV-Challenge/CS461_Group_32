@@ -37,6 +37,7 @@ int Kill = 0;
 int Autonomous = 0;
 int Cali = 0;
 int setter = 1;
+vector <objective> objects;
 using namespace std;
 
 
@@ -223,7 +224,8 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 
 void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed){
 	
-	vector <objective> objects;
+	//vector <objective> objects;
+	objects.clear();
 
 	Mat temp;
 	threshold.copyTo(temp);
@@ -344,6 +346,7 @@ int main(int argc, char* argv[])
 		
 			objective border("Border");	// dropoff;
 			objective delivery("Delivery");
+			objective landing("L.Z.");
 			
 			//Uncomment + duplicate for more objects.
 			
@@ -365,16 +368,16 @@ int main(int argc, char* argv[])
 		}
 		morphOps(threshold);
 		trackFilteredObject(delivery, threshold,HSV,cameraFeed);	
-		/*
+		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Blacktoggle == 1){	
 		inRange(HSV,Scalar(BlH_MIN,BlS_MIN,BlV_MIN),Scalar(BlH_MAX,BlS_MAX,BlV_MAX),threshold);
 		}else{
-		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
+		inRange(HSV,landing.getHSVmin(),landing.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(threshold,HSV,cameraFeed);	
-		*/
+		trackFilteredObject(landing,threshold,HSV,cameraFeed);	
+		
 			
 		imshow(windowName,cameraFeed);
 		createTrackbar( "Autonomous", windowName, &Autonomous, setter, on_trackbar );
