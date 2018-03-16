@@ -43,6 +43,7 @@ Output plugins:
 * output_udp
 * output_viewer ([documentation](mjpg-streamer-experimental/plugins/output_viewer/README.md))
 
+
 Building & Installation
 =======================
 
