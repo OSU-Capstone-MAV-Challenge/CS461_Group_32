@@ -1,0 +1,193 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\epstopdfsetup{update} % only regenerate pdf files when eps file is newer
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{rotating}
+\usepackage{pgfgantt}
+\usepackage{xcolor}
+\geometry{textheight=9.5in, textwidth=7in}
+
+
+% 1. Fill in these details
+\def \CapstoneTeamName{		MAV Challenge}
+\def \CapstoneTeamNumber{		32}
+\def \GroupMemberOne{			Justin Sherburne}
+\def \GroupMemberTwo{			Kaiyuan Fan}
+\def \GroupMemberThree{			Yingshi Huang}
+\def \CapstoneProjectName{		AHS Micro-Air Vehicle Challenge}
+%\def \CapstoneSponsorCompany{	Columbia Helicopters}
+\def \CapstoneSponsorPerson{		Nancy Squires, Ph.D.}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				%Requirements Document
+				%Technology Review
+				%Design Document
+				Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+\renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{8pt}
+            \textbf{\Huge\CapstoneProjectName}\par
+			\vspace{1.5in}
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            % \vspace{5pt}
+            {\Large\NameSigPair{\CapstoneSponsorPerson}\par}
+			\vspace{3pt}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{8pt}
+            {\Large
+                \NameSigPair{\GroupMemberOne}\par
+                \NameSigPair{\GroupMemberTwo}\par
+                \NameSigPair{\GroupMemberThree}\par
+            }
+            \vspace{.5in}
+        }
+        \begin{abstract}
+        The purpose of this document is to provide a reflection on the progress of the Micro Air Vehicle project. We are now ten weeks into the project, approximately one third of the way to completion. Here we will outline problems and possible solutions we have encountered this far, as well as a breakdown of weekly progress made thus far. 
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+
+\section*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+		Name & Date & Reason For Changes & Version\\
+        \hline
+		Progress Report & Dec 3, 2017 & Initial Creation & 1.0\\
+		\hline 
+    \end{tabular}
+\end{center}
+
+
+
+
+\section{Purpose}
+
+The purpose of this project is to design a vehicle capable of competing in the American Helicopter Society’s Micro-Air Vehicle challenge. We have elected to compete in the autonomous category, meaning our vehicle must be able to fly without any user interaction. We are representing Oregon State University for the first time at this competition, and if our project is successful we could gain additional outside funding similar to the OSU rocketry and solar teams.
+
+\section{Project Goals}
+The goal is to create a vehicle capable of navigating the competition environment without human control. Additionally, the vehicle should be able to pick up letters and deliver them to other locations within the competition environment. There are additional constraints on the size, weight, and specific functionalities of the vehicle, but from the computer science standpoint our goals are:
+
+\begin{enumerate}
+\item{The vehicle must be able to stream one camera feed to the base station for manual control. }
+\item{We must have an emergency cut-off switch in case of a loss of communication or control. }
+\item{We must have a manual override that will shut-down autonomous controls.}
+\item{Ultrasonic sensors will be used to calculate distance from objects within the competition area in conjunction with the camera.}
+\item{Image processing at minimum should be able to identify three objects: The letter, the landing area, and the boundary lines.}
+\item{Any flight changes should originate from the base station, and motor controls should be implemented on the vehicle.}
+\item{Our vehicle should fully comply with AHS competition rules and guidelines. }
+\end{enumerate}
+
+
+
+\section{Current Progress}
+
+This project is a collaboration of electrical, mechanical engineering and computer science capstone students. As a team we have made the decision to implement a Raspberry Pi driven helicopter to compete in the American Helicopter Society’s Micro-Air Vehicle challenge. We have selected and are in the process of purchasing various components, specifically, the motors, batteries, Raspberry Pi board, camera sensors, ultrasonic sensors and more. The design decision have been made, and we are currently in the development process. There are assigned tasks for each sub team. From the computer science sub team perspective, we are implementing the autonomous flight systems of the helicopter. We have set up and installed the operating system on our Raspberry Pi board, and we have successfully connected the Raspberry Pi to a Wi-Fi environment constructed by the WiFi Pineapple router and tested the video stream feature. Currently, the video can be captured by the camera module and displayed on the base station. The streaming video has ideal latency and quality for our needs. In the future, we are planning on implementing two camera sensors with a multiplexer and adding OpenCV recognition feature.
+
+\section{Problems}
+
+\subsection{Vehicle Weight}
+The competition requirements state that the vehicle must be lighter than 500g. Because this restriction does not exclude specific components, every piece of the vehicle has to be calculated carefully. This means we must also take special consideration when planning our hardware choices.
+
+\subsection{Object Distance}
+While the micro-air vehicle is moving, we must be able to determine our distance away from both the ground and specific obstacles within the environment. Additionally, we need to be able to locate specific objectives such as letters and landing zones.
+
+\subsection{Communication}
+At minimum, the vehicle must be capable of streaming one video feed to the base station though whatever communication method we choose. However, our hardware configuration requires us to stream two video feeds to the base station, and to return flight commands beck to the vehicle. 
+
+
+\section{Solutions}
+
+\subsection{Vehicle Weight}
+Our research on hardware considerations led us to the Raspberry Pi Zero. This platform weighs over 40 grams less than the full size Pi model, while still maintaining a single-core 1GHz processor. Additionally, the cameras used for the Pi platform are lightweight and compatible with the Pi Zero.
+
+\subsection{Object Distance}
+Our primary source of distance tracking will come from our ultrasonic sensors. These sensors will be used to find distances from the ground and objects directly in front of the vehicle. OpenCV will be used to locate the specific objects within the competition area. Through the use of mathematic formulas we can also calculate our distance away from objects if we know their size prior to competition. 
+
+\subsection{Communication}
+To establish reliable communication, our solution has several components. The key element is the addition of a router to act as an access point for the Pi for this we used a WiFi Pineapple because it is lightweight and something we had on-hand. This router allows the Pi Zero to connect using it's built-in WiFi transmitter, and still allows the entire project to work independently of outside power sources. The bandwidth provided by the WiFi Pineapple is adequate for our project's purposes. 
+
+
+\newpage
+\section{Ten Week Retrospective}
+\vspace{.25in}
+\begin{center}
+    \begin{tabular}{|p{0.3\linewidth}|p{0.3\linewidth}|p{0.3\linewidth}|}
+        \hline
+		 Positives & Deltas: changes that need to be implemented & Actions  to be implemented to create the necessary changes. \\
+        \hline
+		 Created biography and resume for capstone class. Share OneNote with professors. Submit project preferences. & N/A & N/A  \\
+		\hline 
+         Groups assigned. Organized group communication and e-mailed project sponsor. & Group availability needs to be scheduled & Created a doodle poll to have a record of possible meeting times and member availability.  \\
+		\hline 
+         Problem Statement rough draft was due. Our first group meeting. Participated in a tour of Columbia Helicopters facilities in Aurora. We decided on the autonomous implementation for the project. & Sensors for autonomous implementation need to be selected. Future group meeting time needs to be established. & Another doodle poll will  be created for the group availability. Conduct sensor research before next week.  \\
+		\hline 
+         The Sensor requirements were established. Problem Statement final draft was due. Present autonomous research to the group. Group meeting times established. & The Mechanical team changed from a quadcopter to a helicopter on Friday, so the Problem Statement document will need to be edited. & Problem doc will be edited over winter break, after the competition rules are announced. Project will continue as planned with the new design. \\
+		\hline 
+         Ordered initial equipment for the CS implementation. The Project Requirements Document rough draft is due. The Raspberry Pi Zero W works great. & Project sponsor communication is slow-going. & Moving forward, the sponsor should be contacted at least a week ahead if it's via e-mail, or we should take advantage of her office hours for document approval. \\
+		\hline 
+         The Project Requirements document final draft is due. Documents were approved via office hours. Implementation on the Raspberry Pi Zero has begun. & Raspberry Pi is not configured for use out of the box. &  Loaded the Rasbian OS onto the Raspberry Pi, and started initial implementation. \\
+		\hline 
+         6th Annual MAV Student Challenge Rules are announced. The Pi was configured to stream video to the base station using WiFi communication. & Documents written prior to this week will need to be edited to reflect competition changes. Wireless streaming needs to be implemented over WiFi pineapple & Document changes will take place over winter break, and future documents will be in accordance to the new rules. WiFi Pineapple implementation will begin next week. \\
+		\hline
+    \end{tabular}
+\end{center}
+
+\begin{center}
+    \begin{tabular}{|p{0.3\linewidth}|p{0.3\linewidth}|p{0.3\linewidth}|}
+        		\hline 
+        Tech Review Document rough draft is due. Alternative streaming program found that will work better, and it has support for OpenCV. & There is no motor or body for the aircraft yet. Project funding for competition travel should be sought out. & The aircraft will be created from salvaged parts from commercial versions, waiting on shipping. Individuals are encouraged to seek funding. \\
+		\hline 
+         Technology Review is due. Class and meetings canceled due to the holidays. & Peer review by classmates on Tuesday. Rewrite and send the final draft of Technology Review. No meetings due to holidays. & IEEETran format should be reviewed for the Technology Review.\\
+		\hline 
+         The multiplexer has arrived. Design Document is due. Progress Report is due Dec. 4th. & Design Document approved email needed by next week. & Research and test how to connect the Raspberry Pi Zero W to OpenCV.   \\
+        
+        \hline
+            \end{tabular}
+\end{center}
+
+
+\end{document}

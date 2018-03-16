@@ -1,0 +1,289 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{url}
+\usepackage{setspace}
+
+
+%\usepackage{graphicx}
+%\usepackage{epstopdf}
+%\epstopdfsetup{update} % only regenerate pdf files when eps file is newer
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+
+
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+
+% 1. Fill in these details
+\def \CapstoneTeamName{		MAV Challenge}
+\def \CapstoneTeamNumber{		32}
+\def \GroupMemberOne{			Justin Sherburne}
+\def \GroupMemberTwo{			Kaiyuan Fan}
+\def \GroupMemberThree{			Yingshi Huang}
+\def \CapstoneProjectName{		AHS Micro-Air Vehicle Challenge}
+%\def \CapstoneSponsorCompany{	Columbia Helicopters}
+\def \CapstoneSponsorPerson{		Nancy Squires, Ph.D.}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{
+				Technology Review
+				}
+
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+\renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	  \hfill
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            \textbf{\Huge\CapstoneProjectName}\par
+			\vspace{1.5in}
+            {\large Prepared for}\par
+            {\Large\NameSigPair{\CapstoneSponsorPerson}\par}
+			\vspace{3pt}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to
+						%name your team
+            \CapstoneTeamName\par
+            \vspace{8pt}
+            {\Large
+                \NameSigPair{\GroupMemberOne}\par
+                \NameSigPair{\GroupMemberTwo}\par
+                \NameSigPair{\GroupMemberThree}\par
+            }
+            \vspace{.5in}
+        }
+        \begin{abstract}
+				Technology Review is to organize detail of criterion,
+				determine the existing technologies and select the most
+				appropriate method. The problems and features can allocate in four parts,
+				wireless communication, communication, controller and
+				calculation. At the beginning, design the wireless communication.
+				Then, decide the communication between micro-helicopter and the control board;
+				on the base of competitions rules, UDP, TCP, and Web-Internet.
+				These communications consider as possible solutions for connection.
+				After building the communication of data,
+				the controller of hardware depends on on-market products
+				which can match micro-helicopter computer and
+				control board. Last but not lease, calculation is an individual feature.
+				The computer will self-calculates for moving.
+				Camera, software libraries, distance sensor
+				and accelerate positioning will provide information
+				for driving the micro-helicopter.
+				\end{abstract}
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+\section{Project Role}
+
+My role is to learn from requirements and help to design and calculate data in our sub-team.
+To build a full-autonomous system micro-helicopter to enter the competition.
+
+\section{Wireless Communication}
+
+\subsection{Overview}
+
+According to the requirements from the competition, either a remotely-controlled or full-autonomous system is needed.
+No matter remotely-controlled or full-autonomous system,
+wireless communication is a valuable choice for micro-helicopter.
+Wireless communication is a type of data transmission, which do not need physical wires.
+Wireless communication not only can connect with one devices;
+it is capable to connect with multiple devices at the same time.
+Wireless communication can use the wireless signal to distinct devices
+and transfer data correctly to each different device.
+Wireless communication is easy to access and convenience compared with other communications.
+In wireless communication, there are various choices like
+infrared communication, radio, blue-tooth, Wi-Fi, mobile communication and so on.
+
+\subsection{Criteria}
+\begin{enumerate}
+\item{Wireless communication will be the bridge of exchanging data between micro-helicopter and computer.}
+\item{Micro-helicopter will receive data from the wireless communication}
+\item{Wireless communication is able to catch data from Micro-helicopter}
+\end{enumerate}
+
+\subsection{Potential Choices}
+
+My current knowledge gives me only two options blue-tooth and Wi-Fi.
+However, the choices is not enough, so my research has provided more
+like infrared communication, radio, mobile communication.
+
+\subsubsection{Infrared communication}
+
+
+Infrared communication is a high-speed short range wireless communication.\cite{r1}
+It needs to transfer data directly from devices to devices, but no need of network.
+It is a less cost of devices. Data will not lose easily.
+It is a secure way of communication. The range of distance is about ten to thirty meters.
+The speed of transferring data is fast, and it is with a maximum speed of hundred Mbps.
+However, the communication can only control one device at a time.
+Obstacles like doors, walls, bad weather will affect the infrared communication.
+Infrared communication will also provide a strong power which can be harmful to human body.
+%http://ieeexplore.ieee.org/document/554222/
+
+\subsubsection{Bluetooth Radio}
+Blue-tooth\cite{r2} is another short range communication between devices, like phone.
+The range of transmission range is within 10 meter in common devices.
+The distance range can manage by the power of the senders and the receivers.
+Blue-tooth system operates in unlicensed 2.4-GHz frequency.
+Nowadays, blue-tooth is a common tool for transferring data.
+The normal rate of transmission is 1 Mbps.
+It is a tool which has replaced the use of infrared communication.
+%wireless communication
+
+\subsubsection{ZigBee}
+Zig-Bee\cite{r2} is a tool similar to blue-tooth. It is designed for products which need lower power consumption.
+The Zig-Bee can continued work for months or years. Comparing the transfer rate between blue-tooth and Radio
+%wireless communication
+
+\subsubsection{Mobile communication}
+Cellular systems is the most common communications used by mobile cell.
+The mobile uses the signal from the signal towers.
+The area of the signal supply from the tower is like a cell.
+And there are many signal tower to combine as the whole system.
+The team does not have rights to use the signal tower and
+the usage of the phone company is very expensive.
+
+\subsubsection{Wi-Fi communication}
+Wi-Fi\cite{r3} is defined as an abbreviation fro wireless fidelity. It is common to use for computer networking.
+If person has set up Wi-Fi at a place, this person can access the computer network within a certain range of distance.
+The signal from the Wi-Fi can get through the walls or doors, if they are made of woods.
+The Wi-Fi communication can even send or receive signal from upstairs or downstairs.
+The Wi-Fi communication can transmit data at 2.4 GHz frequency. The frequency of the communication can be change by devices.
+The average rate of transmission data is about 50 Mbps to 100 Mbps. It is easy to set up in a new place.
+however, the securety of the Wi-Fi communication is not as good as other communications, password can prevent strangers receive informations.
+
+\subsection{Discussion}
+2.4-GHz frequency is recommended from the rules of the competition.
+So that it becomes one of the reasons that the cellular system has been excluded from the other wireless communications.
+The second main reason for excluding the cellular system is the budget of using it.
+Image processing and video processing are operations which need high-speed data transmit tunnel.
+Zig-Bee and Infrared communication are not as fast as what operations are expected.
+
+\subsection{Conclusion}
+According to the previous consideration, Wi-Fi and blue-tooth are better choices than others communications.
+Both of the communication is easy to purchase on the market and have similar price.
+Compare with the transmission of the data, Wi-Fi has a higher speed. As a result, Wi-Fi becomes better choice of communications.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Communication System}
+
+\subsection{Overview}
+Communications between three hardware: micro-helicopter and control board, control board and remote controller.
+
+
+\subsection{Criteria}
+\begin{enumerate}
+\item{Micro-helicopter will receive data from the control board and respond to movement.}
+\item{Control board will get information from the remote controller which provides data to micro-helicopter for re-position.}
+\end{enumerate}
+
+\subsection{Potential Choices}
+Depends on the previous choice of Wi-Fi, UDP, TCP and Web-Internet are considered as methods to connect the hardwares.
+
+\subsubsection{UDP}
+UDP\cite{r4} stands for User Datagram Protocol and uses of data transferring.
+UDP will not acknowledge the receipt of the sending data.
+It means a disadvantage that no resends for lost data.
+On the contrary, an advantage is that save time without re-sending missing data.
+It is typical for immediate data such as online video, audio transmission, online gaming.
+Intermittent video or audio is an appearance of Lost data.
+
+\subsubsection{TCP}
+TCP\cite{r5} stands for Transmission Control Protocol which is connection-oriented and re-transmittable.
+An advantage is able to resend data and acknowledge lost segments. A disadvantage is extending sending time.
+TCP is representative of sending guarantee data like Web-Page, files.
+
+\subsubsection{Web-Internet}
+Web-Internet is a tool using internet via the web to communicate.
+An advantage is that no need for storage in control board and able to calculate data on other devices.
+A disadvantage is that all data depend on transferring which requires unhindered signal transmissions.
+
+
+\subsection{Discussion}
+In theory, the computer will need lots of data to calculate distance and movement.
+Ensure data received is not as important as using data to calculate more rough distance,
+interrupted data is still value to estimate length and size of target and obstacles.
+Although 2.4GHz radio might be impacted, this communication is still able to send and receive data between woods and thin walls.
+
+\subsection{Conclusion}
+Because of the situations could be happened, UDP can have better performance than TCP.
+Continued and various data sending and receiving for saving time to evaluate distance and length of micro-helicopter to the target or obstacles.
+Skip of video will be fixed by the different anger of position. Wi-Fi is one of most commonly used communications and efficient in exchanging information.
+UDP and WIFI are preferred solutions.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{calculation System}
+
+\subsection{Overview}
+Non-human control of micro-helicopter moving, pre-written code for distance calculations and exact movements depend on calculations.
+
+\subsection{Criteria}
+\begin{enumerate}
+\item{Correct calculations from information}
+\item{Using calculations to make movements}
+\end{enumerate}
+
+\subsection{Potential Choices}
+
+\subsubsection{Data from sensor}
+Distance sensor is a small tool to get a certain range of distances directly.
+The advantage to use distance sensor is receiving data directly and no need to wait calculations.
+The disadvantage for distance sensor is vibration of the micro-helicopter will affect the precision ratio of the distance.
+Incorrect distance might cause a crash to obstacle or unable to pick up the target which will lead to failure.
+
+\subsubsection{Images from camera}
+Cameras can provide more information than distance sensor.
+However, more data as input will need more calculation.
+More calculation will need correspond libraries. And it will need more time and energy to finish the tasks.
+
+\subsubsection{Buildin libraries}
+Software libraries will help the computer calculate data. Most of the formula are provided in libraries which is used for calculate.
+However, it require more storage and computer burning. It is a factor to slow down the result of calculations.
+
+\subsubsection{accelerate positioning}
+It is a method for calculating from the target or obstacles to micro-helicopter.
+It need time for computer to process, but all information can be handle by computer it, which mean fewer energy waste.
+
+\subsection{Discussion}
+Distance will be a tool to help estimate the distance calculation but not providing correct information.
+Accelerate positioning depends on the images from cameras, but not necessary depend on the software libraries.
+However, software libraries can reduce the coding error.
+
+\subsection{Conclusion}
+It is better to have correct data than not allowable error data which can lead failure.
+So using a camera to receive and calculate data is better than receiving direct data from sensor.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\vspace{2mm}
+
+%\section{References}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+
+\end{document}

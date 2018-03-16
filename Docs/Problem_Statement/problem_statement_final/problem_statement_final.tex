@@ -1,43 +1,111 @@
-\documentclass[10pt,letterpaper,onecolumn]{article}
-
-\usepackage{color}
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
 \usepackage{url}
-\usepackage{hyperref}
-\usepackage{enumitem}
-\usepackage[margin=0.75in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\epstopdfsetup{update} % only regenerate pdf files when eps file is newer
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{rotating}
+\usepackage{xcolor}
+\geometry{textheight=9.5in, textwidth=7in}
 
 
+% 1. Fill in these details
+\def \CapstoneTeamName{		MAV Challenge}
+\def \CapstoneTeamNumber{		32}
+\def \GroupMemberOne{			Justin Sherburne}
+\def \GroupMemberTwo{			Kaiyuan Fan}
+\def \GroupMemberThree{			Yingshi Huang}
+\def \CapstoneProjectName{		AHS Micro-Air Vehicle Challenge}
+%\def \CapstoneSponsorCompany{	Columbia Helicopters}
+\def \CapstoneSponsorPerson{		Nancy Squires, Ph.D.}
 
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		Problem Statement
+				%Requirements Document
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+%\renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \begin{titlepage}
-\begin{center}
-\vspace*{3cm}
-\huge{\textbf{AHS Micro-Air Vehicle Challenge}}\par
-\vspace{2cm}
-\large{Instructor: Kevin McGrath, Kirsten Winters}\par
-\vspace{3mm}
-\large{Project Sponsor: Nancy Squires, Ph.D.}\par
-\vspace{1cm}
-\huge{\textbf{Problem Statement}}\par
-\vspace{1cm}
-\large{Written by:}\par
-\vspace{3mm}
-\normalsize{Kaiyuan Fan, Yingshi Huang, Justin Sherburne}\par
-\vspace{25mm}
-\large{\textbf{Abstract:}}\par
-\vspace{4mm}
-\end{center}
-\normalsize{American Helicopter Society invites student teams to participate in the 5th Annual Micro Air Vehicle (MAV) Student Challenge. Our project is to design a quadcopter that is capable of competing in this event on May 14-17. This project is sponsored by Nancy Squires Ph.D., in collaboration with Columbia Helicopters. Throughout this project, we will be working in close coordination with a mechanical engineering team and an electrical engineering team to ensure that our micro-air vehicle can meet the competition requirements. In order to compete our vehicle must weigh less than 500 grams, be shorter than 17.7 inches in any dimension, maintain a stable flight path, and have an on-board camera system. The goal of the project is to create an autonomous micro-air vehicle capable of meeting the competition requirements.}
-
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{8pt}
+            \textbf{\Huge\CapstoneProjectName}\par
+			\vspace{1.5in}
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            % \vspace{5pt}
+            {\Large\NameSigPair{\CapstoneSponsorPerson}\par}
+			\vspace{3pt}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{8pt}
+            {\Large
+                \NameSigPair{\GroupMemberOne}\par
+                \NameSigPair{\GroupMemberTwo}\par
+                \NameSigPair{\GroupMemberThree}\par
+            }
+            \vspace{.5in}
+        }
+        \begin{abstract}
+        American Helicopter Society invites student teams to participate in the 5th Annual Micro Air Vehicle (MAV) Student Challenge. Our project is to design a quadcopter that is capable of competing in this event on May 14-17. This project is sponsored by Nancy Squires Ph.D., in collaboration with Columbia Helicopters. Throughout this project, we will be working in close coordination with a mechanical engineering team and an electrical engineering team to ensure that our micro-air vehicle can meet the competition requirements. In order to compete our vehicle must weigh less than 500 grams, be shorter than 17.7 inches in any dimension, maintain a stable flight path, and have an on-board camera system. The goal of the project is to create an autonomous micro-air vehicle capable of meeting the competition requirements \cite{r14}. 
+        \end{abstract}     
+    \end{singlespace}
 \end{titlepage}
-
-
 \newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+
+\section*{Revision History}
 
 \begin{center}
-\large
-\textbf{Problem Description}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+		Name & Date & Reason For Changes & Version\\
+        \hline
+		Problem Statement & Oct 10, 2017 & Initial Creation & 1.0\\
+		\hline 
+		Problem Statement & Dec 28, 2017 & Styling Revision & 2.0\\
+		\hline
+    \end{tabular}
 \end{center}
+
+
+
+\section{Problem Description}
+
 
 The Micro-Air Vehicle challenge is an annual collegiate competition hosted by The American Helicopter Society. The competition is conducted by the AHS International’s Unmanned VTOL Aircraft and Rotorcraft Committee. Competitors are tasked with building a vehicle capable of steady-state hovering, avoiding obstacles, and recognizing a dropoff point. This vehicle may compete in either a manual or autonomous flight category. The aircraft is remotely controlled and will have the ability to deliver packages to a specified location. While the 2018 competition rules have not yet been announced, last year’s competition included the restrictions on size, weight, and movement listed below:
 \begin{itemize}
@@ -53,17 +121,14 @@ The Micro-Air Vehicle challenge is an annual collegiate competition hosted by Th
 We are creating a stable and reliable air vehicle. The aircraft must be fully tested before competition to ensure each function works reliably. An emergency shutdown and manual override function is required in case of unacceptable aircraft behavior. Besides the implementation of Micro Air Vehicle, we also need to present our design at the competition to a professional audience. The presentation is supposed to illustrate the design process of the air vehicle, explain autonomous elements and package delivery system. The presentation should include a short flight demo to illustrate the capabilities of the aircraft for the audience.
 
 
-\begin{center}
-\large
-\textbf{Proposed Solution}
-\end{center}
 
-We are going to design and manufacture a quadcopter to compete in the micro air vehicle challenge. This is because quadcopters are cheaper and more durable than conventional helicopters. Additionally their smaller blades are more advantageous because they possess less kinetic energy. For small-scale quadcopters, this makes the vehicles safer for close interaction. Quadcopters differ from conventional helicopters, which use rotors that can vary the pitch of their blades dynamically as they move around the rotor hub. As the computer science team in this project, we are tasked with programming the quadcopter system with sufficient functionalities to enable semi-autonomous or fully-autonomous flight. In addition to flight capabilities, we will also be transmitting flight information back to a remote station. This data will be converted into usable information in the form of graphs, spreadsheets, and potentially three-dimensional visualization of the flight path. In addition to the programming requirements, we have a responsibility to communicate and collaborate with the electrical engineering and mechanical engineering team. We will need to convey our requirements for sensors and processing hardware needed to meet our goals.\\
+\section{Proposed Solution}
 
-\begin{center}
-\large
-\textbf{Performance Metrics}
-\end{center}
+
+We are going to design and manufacture a dual-rotor helicopter to compete in the micro air vehicle challenge. A key reason behind this choice is because dual-rotor helicopters are mechanically stabalized during flight. There is little difference in payload capabilities and stability between a helicopter and a quadcopter design. As the computer science team in this project, we are tasked with programming the helicopter with sufficient functionalities to enable semi-autonomous or fully-autonomous flight. In addition to flight capabilities, we will also be transmitting flight information back to a remote station. This data will be converted into usable information in the form of first person video feed, and various distance sensor readouts. In addition to the programming requirements, we have a responsibility to communicate and collaborate with the electrical engineering and mechanical engineering team. We will need to convey our requirements for sensors and processing hardware needed to meet our goals.\\
+
+
+\section{Performance Metrics}
 
 Our team will draft a design proposal before the end of the January. This design proposal will be submitted to the AHS International Unmanned VTOL Aircraft and Rotorcraft Committee. The framework electronic modules of aircraft will be designed and manufactured this fall term. Winter term we will focus on building and refining our vehicle for autonomous flight. Testing and debugging will begin at least a month prior to the competition. Before mid-March, we must submit a test video of your aircraft to the committee for consideration. If our team is selected we will attend the final competition in May at Phoenix. After the competition, we will attend the undergraduate engineer expo to share the experiences and present the design and manufacturing processes.\\
 Success will be measured on the following performance metrics:
@@ -98,14 +163,11 @@ Phoenix to participate in the challenge.
 \end{itemize}
 \end{enumerate}
 
-\vspace{2cm}
-\begin{center}
-\large
-\textbf{References}
-\end{center}
 
-\noindent
-MAV Student Challenge 2017. (n.d.). Retrieved October 10, 2017, from https://vtol.org/education/micro-air-vehicle-student-challenge/micro-air-vehicle-student-challenge-2017\\
-Quadcopter. (2017, October 07). Retrieved October 10, 2017, from https://en.wikipedia.org/wiki/Quadcopter
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
 
 \end{document}
