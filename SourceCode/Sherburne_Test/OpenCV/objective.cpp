@@ -14,13 +14,13 @@ objective::objective(string name){ //Duplicate this for more objects
 			setColor(Scalar(0,250,250));
 	}
 	if( name == "Delivery" ){
-			setHSVmin(Scalar(5,11,159));
-			setHSVmax(Scalar(27,68,207));
+			setHSVmin(Scalar(135,34,56));
+			setHSVmax(Scalar(187,173,256));
 			setColor(Scalar(0,0,250));
 	}
 	if( name == "L.Z." ){
-			setHSVmin(Scalar(0,0,242));
-			setHSVmax(Scalar(75,255,255));
+			setHSVmin(Scalar(0,0,0));
+			setHSVmax(Scalar(231,171,47));
 			setColor(Scalar(250,250,0));
 	}
 	

@@ -38,6 +38,9 @@ int Autonomous = 0;
 int Cali = 0;
 int setter = 1;
 vector <objective> objects;
+//pthread_mutex_t Vector1;
+//pthread_mutex_t Vector2;
+//pthread_mutex_t Vector3;
 using namespace std;
 
 
@@ -226,7 +229,7 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 	
 	//vector <objective> objects;
 	objects.clear();
-
+	
 	Mat temp;
 	threshold.copyTo(temp);
 	//these two vectors needed for output of findContours
@@ -277,16 +280,19 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 }
 
 
-/*
+//***********************************************************************************************************************
+
 void Calculations(){
-	
-	
+	while(1){
+	sleep(5);
+		cout << "Waiting, " << objects.at(1).getType() << endl;
+	}
 }
-*/
 
 
 
-//*********************************************************************
+
+//***********************************************************************************************************************
 
 
 
@@ -294,16 +300,17 @@ int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
 	bool calibrationMode = false;
-	bool webcammode = true;
+	bool webcammode = false;
+	bool threadded = false;
 	
-//s	std::thread Robotic (Calculations);
-	
+	if(threadded){
+		std::thread Robotic (Calculations);
+	}
 	
 	//Matrix to store each frame of the webcam feed
 	Mat cameraFeed;
 	Mat threshold;
 	Mat HSV;
-	UMat HM(threshold.rows, (threshold.cols+cameraFeed.cols), CV_8U);
 	string address;
 
 	
@@ -328,6 +335,7 @@ int main(int argc, char* argv[])
 	//all of our operations will be performed within this loop
 	while(1){
 		//store image to matrix
+
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
@@ -344,12 +352,11 @@ int main(int argc, char* argv[])
 			calibrationMode = true;
 		}
 		
-			objective border("Border");	// dropoff;
+			objective border("Border");	// Declare new objects here;
 			objective delivery("Delivery");
 			objective landing("L.Z.");
 			
-			//Uncomment + duplicate for more objects.
-			
+			//Implement searching block code here. 
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Bordertoggle == 1){	
 		inRange(HSV,Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN),Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX),threshold);
