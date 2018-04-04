@@ -37,8 +37,10 @@ int Kill = 0;
 int Autonomous = 0;
 int Cali = 0;
 int setter = 1;
-vector <objective> objects;
-//pthread_mutex_t Vector1;
+vector <objective> vborders;
+vector <objective> vlandings;
+vector <objective> vpickups;
+pthread_mutex_t lock;
 //pthread_mutex_t Vector2;
 //pthread_mutex_t Vector3;
 using namespace std;
@@ -225,7 +227,7 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 }
 
 
-void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed){
+void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed, vector <objective> &objects){
 	
 	//vector <objective> objects;
 	objects.clear();
@@ -285,7 +287,19 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 void Calculations(){
 	while(1){
 	sleep(5);
-		cout << "Waiting, " << objects.at(1).getType() << endl;
+		pthread_mutex_lock(&lock);
+		if(vborders.size() > 0){
+		cout << "Waiting, " << vborders.at(0).getType() << endl;
+		}if(vpickups.size() > 0){
+		cout << "Waiting, " << vpickups.at(0).getType() << endl;
+		}if(vlandings.size() > 0){
+		cout << "Waiting, " << vlandings.at(0).getType() << endl;
+		}
+		vector<objective> vYellow(vborders);
+		vector<objective> vRed(vpickups);
+		vector<objective> vBlack(vlandings);
+		
+		pthread_mutex_unlock(&lock);
 	}
 }
 
@@ -300,11 +314,12 @@ int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
 	bool calibrationMode = false;
-	bool webcammode = false;
-	bool threadded = false;
+	bool webcammode = true;
+	bool threadded = true;
 	
 	if(threadded){
 		std::thread Robotic (Calculations);
+		Robotic.detach();
 	}
 	
 	//Matrix to store each frame of the webcam feed
@@ -340,12 +355,12 @@ int main(int argc, char* argv[])
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Cali == 0){
-		//if in calibration mode, we track objects based on the HSV slider values.
-		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
-		morphOps(threshold);
-		imshow(windowName2,threshold);
-		trackFilteredObject(threshold,HSV,cameraFeed);
+			//if in calibration mode, we track objects based on the HSV slider values.
+			cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+			inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
+			morphOps(threshold);
+			imshow(windowName2,threshold);
+			trackFilteredObject(threshold,HSV,cameraFeed);
 		}else if(Cali == 1 && calibrationMode == false){
 			destroyWindow(trackbarWindowName);
 			destroyWindow(windowName2);
@@ -357,6 +372,7 @@ int main(int argc, char* argv[])
 			objective landing("L.Z.");
 			
 			//Implement searching block code here. 
+		pthread_mutex_lock(&lock);
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Bordertoggle == 1){	
 		inRange(HSV,Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN),Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX),threshold);
@@ -364,8 +380,7 @@ int main(int argc, char* argv[])
 		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(border, threshold,HSV,cameraFeed);	
-		
+		trackFilteredObject(border, threshold,HSV,cameraFeed, vborders);	
 		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Delivtoggle == 1){	
@@ -374,7 +389,7 @@ int main(int argc, char* argv[])
 		inRange(HSV,delivery.getHSVmin(),delivery.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(delivery, threshold,HSV,cameraFeed);	
+		trackFilteredObject(delivery, threshold,HSV,cameraFeed, vpickups);	
 		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Blacktoggle == 1){	
@@ -383,7 +398,8 @@ int main(int argc, char* argv[])
 		inRange(HSV,landing.getHSVmin(),landing.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(landing,threshold,HSV,cameraFeed);	
+		trackFilteredObject(landing,threshold,HSV,cameraFeed, vlandings);	
+		pthread_mutex_unlock(&lock);
 		
 			
 		imshow(windowName,cameraFeed);
