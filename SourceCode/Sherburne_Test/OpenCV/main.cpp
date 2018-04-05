@@ -285,21 +285,35 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 //***********************************************************************************************************************
 
 void Calculations(){
+	vector<objective> vYellow;
+	vector<objective> vRed;
+	vector<objective> vBlack;
+	int x = 0, y = 0;
+	float m = 0;
+	
 	while(1){
 	sleep(5);
 		pthread_mutex_lock(&lock);
-		if(vborders.size() > 0){
-		cout << "Waiting, " << vborders.at(0).getType() << endl;
-		}if(vpickups.size() > 0){
-		cout << "Waiting, " << vpickups.at(0).getType() << endl;
-		}if(vlandings.size() > 0){
-		cout << "Waiting, " << vlandings.at(0).getType() << endl;
-		}
-		vector<objective> vYellow(vborders);
-		vector<objective> vRed(vpickups);
-		vector<objective> vBlack(vlandings);
-		
+		vYellow = vborders;
+		vRed = vpickups;
+		vBlack = vlandings;
 		pthread_mutex_unlock(&lock);
+		
+		if(vYellow.size() >= 2){
+			for(int i = 0; (i+1) < vYellow.size(); i++){
+					x = (vYellow.at(i).getxPos() - vYellow.at(i+1).getxPos());
+					y = (vYellow.at(i).getyPos() - vYellow.at(i+1).getyPos());
+					if( x == 0){
+						//diagonal
+					}else{
+						m = ((float)y / (float)x);
+						cout << x << " , " << y << " , " << m << endl;
+					}
+			}
+		}
+		vYellow.clear();
+		vRed.clear();
+		vBlack.clear();
 	}
 }
 
@@ -405,7 +419,10 @@ int main(int argc, char* argv[])
 		imshow(windowName,cameraFeed);
 		createTrackbar( "Autonomous", windowName, &Autonomous, setter, on_trackbar );
 		createTrackbar( "Kill", windowName, &Kill, setter, on_trackbar );
-
+		
+		vborders.clear();
+		vpickups.clear();
+		vlandings.clear();
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
 		waitKey(30);
