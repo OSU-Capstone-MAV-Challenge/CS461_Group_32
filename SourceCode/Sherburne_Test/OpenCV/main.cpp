@@ -12,7 +12,8 @@
 //FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //IN THE SOFTWARE.
-
+#include <algorithm>    // std::sort
+#include <math.h> 
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -289,9 +290,11 @@ void Calculations(){
 	vector<objective> vRed;
 	vector<objective> vBlack;
 	int x = 0, y = 0, div = 0;
-	int YelloSize = 0, trakr = 0;
-	float m = 0, mAvg =0;
-	float slopes[2][4] = {{}, {}};  //To keep track of slopes with a count of # of occurences. 
+	int YelloSize = 0;
+	float m = 0, mAvg = 0, Summ = 0;
+	vector<float> slopes;
+	vector<float> slopesDev;
+	
 	
 	while(1){
 	sleep(1);
@@ -316,47 +319,49 @@ void Calculations(){
 					}else{
 						m = ((float)y / (float)x);
 						//cout << YelloSize << " , " << vYellow.at(i).getxPos() << " , " << m << endl;
-					}
-/*					if(m > 0){
-						if(m > 1){
-							slopes[0][1] = m;
-							slopes[1][1]++;
-						}else{
-							slopes[0][0] = m;
-							slopes[1][0]++;
-						}
-					}else{
-						if(m < -1){
-							slopes[0][3] = m;
-							slopes[1][3]++;
-						}else{
-							slopes[0][2] = m;
-							slopes[1][2]++;
-						}
-					}
-*/
-					
-					
-				//mAvg = mAvg + m;
-				//div++;
+					}	
+				mAvg = mAvg + m;
+				div++;
 				}
+				mAvg = mAvg / div; 
+				slopes.push_back(mAvg);
+				//cout << mAvg << endl;
+				mAvg = 0;
+				div = 0;
 			}
-			//mAvg = mAvg / div; 
-			//cout << mAvg << endl;
-			for(int l=0; l<2; l++){
-				for(int p = 0; p<4; p++){
-					cout << slopes[l][p] << " , ";
-					slopes [l][p] = 0;
+			//cout << "." << endl;
+			
+			std::sort (slopes.begin(), slopes.end());
+			for( int r = 0; r < slopes.size(); r++){
+				mAvg = mAvg + slopes.at(r);
+			}
+			mAvg = mAvg / slopes.size();
+			for( int r = 0; r < slopes.size(); r++){
+				slopesDev.push_back(mAvg - slopes.at(r));
+				slopesDev.at(r) = slopesDev.at(r) * slopesDev.at(r);
+				Summ = Summ + slopesDev.at(r);
+			}
+			Summ = Summ / (slopes.size() - 1);
+			float StdDev = sqrt (Summ);
+			cout << "Standard Deviation!! : " << StdDev << endl;	
+				if(StdDev > (.2)){
+					cout << "Corner!" << endl;
 				}
-				cout << endl;
-			}
+				if(StdDev <(.2)){
+					cout << "Line!" << endl;
+				}
 		}
+		
+
+		
+		Summ = 0;
 		mAvg = 0;
 		div = 0;
-		trakr = 0;
 		vYellow.clear();
 		vRed.clear();
 		vBlack.clear();
+		slopes.clear();
+		slopesDev.clear();
 	}
 }
 
