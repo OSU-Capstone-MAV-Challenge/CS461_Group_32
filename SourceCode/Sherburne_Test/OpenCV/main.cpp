@@ -288,29 +288,72 @@ void Calculations(){
 	vector<objective> vYellow;
 	vector<objective> vRed;
 	vector<objective> vBlack;
-	int x = 0, y = 0;
-	float m = 0;
+	int x = 0, y = 0, div = 0;
+	int YelloSize = 0, trakr = 0;
+	float m = 0, mAvg =0;
+	float slopes[2][4] = {{}, {}};  //To keep track of slopes with a count of # of occurences. 
 	
 	while(1){
-	sleep(5);
+	sleep(1);
 		pthread_mutex_lock(&lock);
 		vYellow = vborders;
 		vRed = vpickups;
 		vBlack = vlandings;
 		pthread_mutex_unlock(&lock);
 		
-		if(vYellow.size() >= 2){
-			for(int i = 0; (i+1) < vYellow.size(); i++){
-					x = (vYellow.at(i).getxPos() - vYellow.at(i+1).getxPos());
-					y = (vYellow.at(i).getyPos() - vYellow.at(i+1).getyPos());
+		YelloSize = vYellow.size();
+		
+		
+		if(YelloSize >= 2){
+			for(int i = 0; i < YelloSize; i++){
+				for(int k = 0; k < YelloSize; k++){
+					if( i != k){
+					x = (vYellow.at(i).getxPos() - vYellow.at(k).getxPos());
+					y = (vYellow.at(i).getyPos() - vYellow.at(k).getyPos());
+					}
 					if( x == 0){
-						//diagonal
+						m = 0;
 					}else{
 						m = ((float)y / (float)x);
-						cout << x << " , " << y << " , " << m << endl;
+						//cout << YelloSize << " , " << vYellow.at(i).getxPos() << " , " << m << endl;
 					}
+/*					if(m > 0){
+						if(m > 1){
+							slopes[0][1] = m;
+							slopes[1][1]++;
+						}else{
+							slopes[0][0] = m;
+							slopes[1][0]++;
+						}
+					}else{
+						if(m < -1){
+							slopes[0][3] = m;
+							slopes[1][3]++;
+						}else{
+							slopes[0][2] = m;
+							slopes[1][2]++;
+						}
+					}
+*/
+					
+					
+				//mAvg = mAvg + m;
+				//div++;
+				}
+			}
+			//mAvg = mAvg / div; 
+			//cout << mAvg << endl;
+			for(int l=0; l<2; l++){
+				for(int p = 0; p<4; p++){
+					cout << slopes[l][p] << " , ";
+					slopes [l][p] = 0;
+				}
+				cout << endl;
 			}
 		}
+		mAvg = 0;
+		div = 0;
+		trakr = 0;
 		vYellow.clear();
 		vRed.clear();
 		vBlack.clear();
