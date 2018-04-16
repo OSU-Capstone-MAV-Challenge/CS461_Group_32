@@ -13,12 +13,6 @@
         var hasGP = false;
         var repGP;
         var funGP;
-        var input = {
-            left: false,
-            right: false,
-            up: false,
-            down: false
-        };
         function initialize() {
             return "getGamepads" in navigator;
         }
@@ -53,6 +47,12 @@
                 if (env.keyCode == '73') {
                     go('i');
                 }
+                if (env.keyCode == '90') {
+                    go('z');
+                }
+                if (env.keyCode == '88') {
+                    go('x');
+                }
             };
         });
         $(document).ready(function () {
@@ -79,6 +79,12 @@
             });
             $('#Init').mousedown(function () {
                 go('i');
+            });
+            $('#Test1').mousedown(function () {
+                go('z');
+            });
+            $('#Test2').mousedown(function () {
+                go('x');
             });
         });
         //Gamepad support
@@ -186,18 +192,22 @@
 
         <div align="center" id="main">
             <h3>Manual Mode:</h3>
-            <button id="Init"><h3>I-Initalize and Take off</h3></button>
+            <button id="Init"><h3>I-Initalize</h3></button>
             <br>
-            <button id="Forward"><h3>W-forward</h3></button>
-            <button id="Backward"><h3>S-backward</h3></button>
+            <button id="Forward"><h3>W-(Top motor 2 up)forward</h3></button>
+            <button id="Backward"><h3>S-(Top motor 2 down)backward</h3></button>
             <br>
-            <button id="Left"><h3>A-left</h3></button>
-            <button id="Right"><h3>D-right</h3></button>
+            <button id="Left"><h3>A-(BOTTOM motor 1 up)left</h3></button>
+            <button id="Right"><h3>D-(BOTTOM motor 1 down)right</h3></button>
             <br>
-            <button id="Up"><h3>Q-up</h3></button>
-            <button id="Down"><h3>E-down</h3></button>
+            <button id="Up"><h3>Q-(both up)up</h3></button>
+            <button id="Down"><h3>E-(both down)down</h3></button>
             <br>
             <button id="Cut"><h3>P-cut off</h3></button>
+            <br>
+            <button id="Test1"><h3>Z-test button 1</h3></button>
+            <button id="Test2"><h3>X-test button 2</h3></button>
+            <br>
         </div>
     </body>
     <div id="gamepadPrompt"></div>
