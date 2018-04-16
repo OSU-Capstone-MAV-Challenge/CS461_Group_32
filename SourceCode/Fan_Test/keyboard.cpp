@@ -4,7 +4,7 @@
 using namespace std;
 int main()
 {
-	printf("Start priting......\n");
+	printf("Start printing......\n");
 	while (true) {
 		Sleep(3000);
 		keybd_event('E', 0, 0, 0);
