@@ -1,6 +1,4 @@
-//objectTrackingTutorial.cpp
-
-//Written by  Kyle Hounslow 2013
+//Contributions by  Kyle Hounslow 2013
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software")
 //, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -12,6 +10,7 @@
 //FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //IN THE SOFTWARE.
+
 #include <algorithm>    // std::sort
 #include <math.h> 
 #include <sstream>
@@ -22,6 +21,11 @@
 #include <objective.h>
 #include <vector>
 #include <thread>
+extern "C" {
+#include <xdo.h>
+}
+//#include <Windows.h>
+
 int H_MIN = 0, S_MIN = 0, V_MIN = 0; 
 int H_MAX = 256, S_MAX = 256, V_MAX = 256;
 int BorderH_MIN = 0, BorderS_MIN = 0, BorderV_MIN = 0; 
@@ -311,13 +315,13 @@ void Calculations(){
 			for(int i = 0; i < YelloSize; i++){
 				for(int k = 0; k < YelloSize; k++){
 					if( i != k){
-					x = (vYellow.at(i).getxPos() - vYellow.at(k).getxPos());
-					y = (vYellow.at(i).getyPos() - vYellow.at(k).getyPos());
+						x = abs(vYellow.at(i).getxPos() - vYellow.at(k).getxPos());
+						y = abs(vYellow.at(i).getyPos() - vYellow.at(k).getyPos());
 					}
 					if( x == 0){
 						m = 0;
 					}else{
-						m = ((float)y / (float)x);
+						m = abs((float)y / (float)x);
 						//cout << YelloSize << " , " << vYellow.at(i).getxPos() << " , " << m << endl;
 					}	
 				mAvg = mAvg + m;
@@ -333,26 +337,40 @@ void Calculations(){
 			
 			std::sort (slopes.begin(), slopes.end());
 			for( int r = 0; r < slopes.size(); r++){
-				mAvg = mAvg + slopes.at(r);
+				if(slopes.at(r) < 25){
+					mAvg = mAvg + slopes.at(r);
+					div++;
+				}
 			}
-			mAvg = mAvg / slopes.size();
+			mAvg = (mAvg / div);
+			div = 0;
 			for( int r = 0; r < slopes.size(); r++){
 				slopesDev.push_back(mAvg - slopes.at(r));
 				slopesDev.at(r) = slopesDev.at(r) * slopesDev.at(r);
 				Summ = Summ + slopesDev.at(r);
 			}
-			Summ = Summ / (slopes.size() - 1);
+			Summ = Summ / (slopesDev.size());
 			float StdDev = sqrt (Summ);
 			cout << "Standard Deviation!! : " << StdDev << endl;	
-				if(StdDev > (.2)){
-					cout << "Corner!" << endl;
-				}
-				if(StdDev <(.2)){
-					cout << "Line!" << endl;
-				}
-		}
-		
+			if(StdDev > (.4)){
+				xdo_t *xdo = xdo_new(NULL);
+  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
 
+				//cout << "Corner!" << endl;
+				for(int r = 0; r < slopesDev.size(); r++){
+					cout << slopesDev.at(r) << endl;	
+				}
+			
+			}
+			if(StdDev < (.4)){
+				//xdo_key("e");
+				xdo_t *xdo = xdo_new(NULL);
+  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+				for(int r = 0; r < slopes.size(); r++){
+					cout << slopes.at(r) << endl;	
+				}
+			}
+		}
 		
 		Summ = 0;
 		mAvg = 0;
