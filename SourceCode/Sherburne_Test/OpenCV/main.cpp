@@ -1,6 +1,4 @@
-//objectTrackingTutorial.cpp
-
-//Written by  Kyle Hounslow 2013
+//Contributions by  Kyle Hounslow 2013
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software")
 //, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -13,6 +11,8 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //IN THE SOFTWARE.
 
+#include <algorithm>    // std::sort
+#include <math.h> 
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -21,6 +21,11 @@
 #include <objective.h>
 #include <vector>
 #include <thread>
+extern "C" {
+#include <xdo.h>
+}
+//#include <Windows.h>
+
 int H_MIN = 0, S_MIN = 0, V_MIN = 0; 
 int H_MAX = 256, S_MAX = 256, V_MAX = 256;
 int BorderH_MIN = 0, BorderS_MIN = 0, BorderV_MIN = 0; 
@@ -37,8 +42,10 @@ int Kill = 0;
 int Autonomous = 0;
 int Cali = 0;
 int setter = 1;
-vector <objective> objects;
-//pthread_mutex_t Vector1;
+vector <objective> vborders;
+vector <objective> vlandings;
+vector <objective> vpickups;
+pthread_mutex_t lock;
 //pthread_mutex_t Vector2;
 //pthread_mutex_t Vector3;
 using namespace std;
@@ -225,7 +232,7 @@ void trackFilteredObject(Mat threshold,Mat HSV, Mat &cameraFeed){
 }
 
 
-void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed){
+void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFeed, vector <objective> &objects){
 	
 	//vector <objective> objects;
 	objects.clear();
@@ -283,9 +290,96 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 //***********************************************************************************************************************
 
 void Calculations(){
+	vector<objective> vYellow;
+	vector<objective> vRed;
+	vector<objective> vBlack;
+	int x = 0, y = 0, div = 0;
+	int YelloSize = 0;
+	float m = 0, mAvg = 0, Summ = 0;
+	vector<float> slopes;
+	vector<float> slopesDev;
+	
+	
 	while(1){
-	sleep(5);
-		cout << "Waiting, " << objects.at(1).getType() << endl;
+	sleep(1);
+		pthread_mutex_lock(&lock);
+		vYellow = vborders;
+		vRed = vpickups;
+		vBlack = vlandings;
+		pthread_mutex_unlock(&lock);
+		
+		YelloSize = vYellow.size();
+		
+		
+		if(YelloSize >= 2){
+			for(int i = 0; i < YelloSize; i++){
+				for(int k = 0; k < YelloSize; k++){
+					if( i != k){
+						x = abs(vYellow.at(i).getxPos() - vYellow.at(k).getxPos());
+						y = abs(vYellow.at(i).getyPos() - vYellow.at(k).getyPos());
+					}
+					if( x == 0){
+						m = 0;
+					}else{
+						m = abs((float)y / (float)x);
+						//cout << YelloSize << " , " << vYellow.at(i).getxPos() << " , " << m << endl;
+					}	
+				mAvg = mAvg + m;
+				div++;
+				}
+				mAvg = mAvg / div; 
+				slopes.push_back(mAvg);
+				//cout << mAvg << endl;
+				mAvg = 0;
+				div = 0;
+			}
+			//cout << "." << endl;
+			
+			std::sort (slopes.begin(), slopes.end());
+			for( int r = 0; r < slopes.size(); r++){
+				if(slopes.at(r) < 25){
+					mAvg = mAvg + slopes.at(r);
+					div++;
+				}
+			}
+			mAvg = (mAvg / div);
+			div = 0;
+			for( int r = 0; r < slopes.size(); r++){
+				slopesDev.push_back(mAvg - slopes.at(r));
+				slopesDev.at(r) = slopesDev.at(r) * slopesDev.at(r);
+				Summ = Summ + slopesDev.at(r);
+			}
+			Summ = Summ / (slopesDev.size());
+			float StdDev = sqrt (Summ);
+			cout << "Standard Deviation!! : " << StdDev << endl;	
+			if(StdDev > (.4)){
+				xdo_t *xdo = xdo_new(NULL);
+  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+
+				//cout << "Corner!" << endl;
+				for(int r = 0; r < slopesDev.size(); r++){
+					cout << slopesDev.at(r) << endl;	
+				}
+			
+			}
+			if(StdDev < (.4)){
+				//xdo_key("e");
+				xdo_t *xdo = xdo_new(NULL);
+  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+				for(int r = 0; r < slopes.size(); r++){
+					cout << slopes.at(r) << endl;	
+				}
+			}
+		}
+		
+		Summ = 0;
+		mAvg = 0;
+		div = 0;
+		vYellow.clear();
+		vRed.clear();
+		vBlack.clear();
+		slopes.clear();
+		slopesDev.clear();
 	}
 }
 
@@ -300,11 +394,12 @@ int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
 	bool calibrationMode = false;
-	bool webcammode = false;
-	bool threadded = false;
+	bool webcammode = true;
+	bool threadded = true;
 	
 	if(threadded){
 		std::thread Robotic (Calculations);
+		Robotic.detach();
 	}
 	
 	//Matrix to store each frame of the webcam feed
@@ -340,12 +435,12 @@ int main(int argc, char* argv[])
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Cali == 0){
-		//if in calibration mode, we track objects based on the HSV slider values.
-		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
-		inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
-		morphOps(threshold);
-		imshow(windowName2,threshold);
-		trackFilteredObject(threshold,HSV,cameraFeed);
+			//if in calibration mode, we track objects based on the HSV slider values.
+			cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
+			inRange(HSV,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX),threshold);
+			morphOps(threshold);
+			imshow(windowName2,threshold);
+			trackFilteredObject(threshold,HSV,cameraFeed);
 		}else if(Cali == 1 && calibrationMode == false){
 			destroyWindow(trackbarWindowName);
 			destroyWindow(windowName2);
@@ -357,6 +452,7 @@ int main(int argc, char* argv[])
 			objective landing("L.Z.");
 			
 			//Implement searching block code here. 
+		pthread_mutex_lock(&lock);
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Bordertoggle == 1){	
 		inRange(HSV,Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN),Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX),threshold);
@@ -364,8 +460,7 @@ int main(int argc, char* argv[])
 		inRange(HSV,border.getHSVmin(),border.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(border, threshold,HSV,cameraFeed);	
-		
+		trackFilteredObject(border, threshold,HSV,cameraFeed, vborders);	
 		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Delivtoggle == 1){	
@@ -374,7 +469,7 @@ int main(int argc, char* argv[])
 		inRange(HSV,delivery.getHSVmin(),delivery.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(delivery, threshold,HSV,cameraFeed);	
+		trackFilteredObject(delivery, threshold,HSV,cameraFeed, vpickups);	
 		
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Blacktoggle == 1){	
@@ -383,13 +478,17 @@ int main(int argc, char* argv[])
 		inRange(HSV,landing.getHSVmin(),landing.getHSVmax(),threshold);
 		}
 		morphOps(threshold);
-		trackFilteredObject(landing,threshold,HSV,cameraFeed);	
+		trackFilteredObject(landing,threshold,HSV,cameraFeed, vlandings);	
+		pthread_mutex_unlock(&lock);
 		
 			
 		imshow(windowName,cameraFeed);
 		createTrackbar( "Autonomous", windowName, &Autonomous, setter, on_trackbar );
 		createTrackbar( "Kill", windowName, &Kill, setter, on_trackbar );
-
+		
+		vborders.clear();
+		vpickups.clear();
+		vlandings.clear();
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
 		waitKey(30);

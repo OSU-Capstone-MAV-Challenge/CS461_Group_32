@@ -4,6 +4,7 @@
 #include <softPwm.h>
 //http://wiringpi.com/reference/software-pwm-library/
 #include <string>
+#include <pthread>
 
 using namespace std;
 
