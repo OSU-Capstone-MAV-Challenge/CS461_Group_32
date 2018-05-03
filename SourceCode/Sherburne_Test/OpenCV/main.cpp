@@ -290,27 +290,39 @@ void trackFilteredObject(objective Targets, Mat threshold,Mat HSV, Mat &cameraFe
 //***********************************************************************************************************************
 
 void Calculations(){
-	vector<objective> vYellow;
+	vector<objective> vYellow;		//Vectors containing our points. Should never be overwritten.
 	vector<objective> vRed;
 	vector<objective> vBlack;
-	int x = 0, y = 0, div = 0;
-	int YelloSize = 0;
-	float m = 0, mAvg = 0, Summ = 0;
-	vector<float> slopes;
-	vector<float> slopesDev;
 	
+	int x = 0, y = 0, div = 0;		//Various int's used for calculation
+	int YelloSize = 0, div2 = 0;
+	float m = 0, mAvg = 0, Summ = 0;
+	float m2 = 0, m2Avg = 0, Summ2 = 0;
+	
+	int forward = 0, backward = 0;   //Flight input trackers
+	int right = 0, left = 0;
+	int up = 0, down = 0;
+	
+	vector<float> slopes;		//vectors to accumilate slope calculations
+	vector<float> slopes2;
+	vector<float> slopesDev;	//Deviations
+	vector<float> slopes2Dev;
+	vector<bool> LineCounter; 	// This will store 1 for line, 0 for corner
+	vector<int> xLine;			//Used to store x & y values of vYellow for easy sorting
+	vector<int> yLine;
 	
 	while(1){
-	sleep(1);
-		pthread_mutex_lock(&lock);
-		vYellow = vborders;
+	//sleep(1);
+		pthread_mutex_lock(&lock);		//Wait for the main thread to unlock the value
+		vYellow = vborders;				//Store our values in manipulatable vectors
 		vRed = vpickups;
 		vBlack = vlandings;
 		pthread_mutex_unlock(&lock);
 		
-		YelloSize = vYellow.size();
 		
 		
+		//Begin corner calculations.
+		YelloSize = vYellow.size();			
 		if(YelloSize >= 2){
 			for(int i = 0; i < YelloSize; i++){
 				for(int k = 0; k < YelloSize; k++){
@@ -320,68 +332,131 @@ void Calculations(){
 					}
 					if( x == 0){
 						m = 0;
+					}else if(y == 0){
+						m2=0;
 					}else{
 						m = abs((float)y / (float)x);
-						//cout << YelloSize << " , " << vYellow.at(i).getxPos() << " , " << m << endl;
+						m2 = abs((float)x / (float)y);
 					}	
 				mAvg = mAvg + m;
+				m2Avg = m2Avg + m2;
 				div++;
 				}
 				mAvg = mAvg / div; 
 				slopes.push_back(mAvg);
-				//cout << mAvg << endl;
+				m2Avg = m2Avg / div; 
+				slopes2.push_back(m2Avg);
 				mAvg = 0;
+				m2Avg =0;
 				div = 0;
-			}
-			//cout << "." << endl;
-			
+			}			
 			std::sort (slopes.begin(), slopes.end());
 			for( int r = 0; r < slopes.size(); r++){
 				if(slopes.at(r) < 25){
 					mAvg = mAvg + slopes.at(r);
 					div++;
 				}
+				if(slopes2.at(r) < 25){
+					m2Avg = m2Avg + slopes2.at(r);
+					div2++;
+				}
 			}
 			mAvg = (mAvg / div);
+			m2Avg = (m2Avg / div2);
 			div = 0;
-			for( int r = 0; r < slopes.size(); r++){
+			div2 = 0;
+			for( int r = 0; r < slopes.size(); r++){	//Calculating standard deviation
 				slopesDev.push_back(mAvg - slopes.at(r));
 				slopesDev.at(r) = slopesDev.at(r) * slopesDev.at(r);
 				Summ = Summ + slopesDev.at(r);
 			}
+			for( int r = 0; r < slopes2.size(); r++){
+				slopes2Dev.push_back(m2Avg - slopes2.at(r));
+				slopes2Dev.at(r) = slopes2Dev.at(r) * slopes2Dev.at(r);
+				Summ2 = Summ2 + slopes2Dev.at(r);
+			}
 			Summ = Summ / (slopesDev.size());
+			Summ2 = Summ2 / (slopes2Dev.size());
 			float StdDev = sqrt (Summ);
-			cout << "Standard Deviation!! : " << StdDev << endl;	
-			if(StdDev > (.4)){
-				xdo_t *xdo = xdo_new(NULL);
-  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
-
-				//cout << "Corner!" << endl;
-				for(int r = 0; r < slopesDev.size(); r++){
-					cout << slopesDev.at(r) << endl;	
-				}
+			float StdDev2 = sqrt (Summ2);
+			//cout << "Standard Deviation!! : " << StdDev << " : " << StdDev2 << endl;	
+			
+			if(StdDev > (.2) && StdDev2 > (.2)){  //is corner?
+				LineCounter.push_back(0);
+				//xdo_t *xdo = xdo_new(NULL);
+  				//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+				
 			
 			}
-			if(StdDev < (.4)){
-				//xdo_key("e");
-				xdo_t *xdo = xdo_new(NULL);
-  				xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
-				for(int r = 0; r < slopes.size(); r++){
-					cout << slopes.at(r) << endl;	
-				}
+			if(StdDev < (.2) || StdDev2 < (.2)){	//is line?
+				LineCounter.push_back(1);
+				//xdo_t *xdo = xdo_new(NULL);
+  				//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
 			}
 		}
-		
+		//Clear the used variables for next cycle. 
 		Summ = 0;
 		mAvg = 0;
 		div = 0;
-		vYellow.clear();
-		vRed.clear();
-		vBlack.clear();
+		Summ2 = 0;
+		m2Avg = 0;
+		div2 = 0;
 		slopes.clear();
 		slopesDev.clear();
+		slopes2.clear();
+		slopes2Dev.clear();
+		
+		//End corner detection
+		//If line vs corner flight commands
+		
+		if(LineCounter.size() >= 100){
+			for(int i =0; i < LineCounter.size(); i++){ // This will store 1 for line, 0 for corner
+				if(LineCounter.at(i) == 1){
+					Summ++;							//reusing for simplicity
+				}
+			}
+			if(Summ >= 50){   //If it's a line, we must determine if the line is straight
+				cout << "line" << endl;
+				for(int i = 0; i < YelloSize; i++){
+						xLine.push_back(vYellow.at(i).getxPos());
+						yLine.push_back(vYellow.at(i).getyPos());
+				}
+				std::sort(xLine.begin(), xLine.end());
+				std::sort(yLine.begin(), yLine.end());
+				if(xLine.at(xLine.size()-1)-25 <= xLine.at(0)){		//Is the line vertical?
+					cout << "Vertical" << endl;
+				}else if(yLine.at(yLine.size()-1)-25 <= yLine.at(0)){	//Is it horizontal?
+					cout << "Horizontal" << endl;
+				}
+				
+				
+			}else{				//Else it's a corner, which way do we turn?
+				cout << "corner" << endl;
+				
+				
+				
+			}
+			Summ = 0;
+			LineCounter.clear();
+			xLine.clear();
+			yLine.clear();
+		}
+		
+		
+		vYellow.clear();   //Clear the points
+		vRed.clear();
+		vBlack.clear();
 	}
+	
+
+	
+	
 }
+
+
+
+
+//************************************************************************************************************
 
 
 
@@ -496,5 +571,7 @@ int main(int argc, char* argv[])
 	
 	return 0;
 }
+
+
 
 
