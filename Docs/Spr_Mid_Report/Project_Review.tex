@@ -167,18 +167,25 @@ Our team’s solution to the under-powered motors was to implement bigger, bette
 
 \subsection{Current Progress}
 
+The main progress since the first week of this term is we found the way to establish the connection between our autonomous code to control the motors. Our autonomous functions are developed by using OpenCV in C++. The onboard motor control part is developed by the electric engineering team by using Python to change the servos. The manual control was developed in HTML so that user can control the helicopter by using the mouse, keyboard, and the controller through a web browser. Manual control and onboard motor control was connected by a Python web framework named tornado, this was solved at the last term. This term we were originally thinking interface between Python and C++, and we were stuck a few weeks. Later, we started open our scope, we try to connect C++ with the HTML, and we found the solution of simulating key press by our autonomous code and send on-board motor control commands through the web browser.
+
+For the expo, we are focusing on building a fully manual controlled vehicle. I am responsible for the manual control part. The manual control code has been tweaked and added few new features. When we tested the yaw rotation last term, our old implementation is to change the rotation by pressing two buttons. One button to increase or decrease one main motor to get helicopter turning, and the other button to set the motor back to its original speed. In real life, the toy helicopter performs in another way. When a user holds the turning button the helicopter start turning, and when the user releases the turning button, the helicopter should stop turning. This feature was built in our manual control code. Another feature added is when the user holds a key, the browser will send repeat commands. This will cause unexpected problems in the flight, I solved by setting a flag to check whether the user has released this key button.
+
+During the first two weeks, we changed our goal of attending the competition held in Arizona. We were unable to meet the bar of entering the Gate 2, but we still develop to meet the competition requirements. This is the first year Oregon State have this project, and we believe next year the team takes this project can benefit based on what we have.
+
 \subsection{Future Goals}
+
+Our future goal contains implementing the remaining autonomous functions and test the manual flight. We have tested the rise and down functions. We found the yaw rotation is unstable from the last test because of the poor motors and unbalanced helicopter body. We will test yaw rotation with the new motors very soon. The EE team get the rear motor working, but we haven’t tested the forward and backward functions. Autonomous flight needs the further test as well. At this time, we left with the manual control flight test and develop remaining autonomous functions.
 
 \subsection{Problems}
 
+A big problem has impeded our CS develop team is interfacing the C++ autonomous code to our HTML and Python motor control system. Another is during the last flight test, we realized our motors are not efficient. We purchased the new motors during the spring break, but the package unable to deliver in time. The EE team need time to re-soldering the motors and connect the wires. ME team must reassemble and balance the helicopter body. Our CS team can develop without the helicopter body, but we cannot test our code on the helicopter. We have limited time to test with the helicopter assembly delay.
+
 \subsection{Solutions}
 
+Our team has widened the vision, we found interfacing Python and C++ is complex. We changed the idea to tackle the connection between C++ to HTML and the problem was solved. 
 
-
-
-
-
-
+With the limit time remaining, we are going to get more tests at following weeks when the helicopter being reassembled. Preparing and delivering a fully manual controlled helicopter at the expo.
 
 \section{Conclusion}
 
