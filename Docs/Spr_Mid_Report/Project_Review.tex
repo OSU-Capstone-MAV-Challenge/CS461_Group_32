@@ -127,23 +127,23 @@ The goal is to create a vehicle capable of navigating the competition environmen
 
 \subsection{Current Progress}
 
-Currently progress is in full swing for the autonomous portion of the helicopter. It is the largest portion that is still unfinished for the project, with everything else being minor adjustments once the helicopter is operational. I have elected to begin with the corner detection algorithm as I suspected that it would be the most challenging portion of the program. Currently we can consistently determine whether the camera is looking at a line or a corner. While I do not have specific numbers on the accuracy it has proved to be accurate enough for our purposes. In addition to the line detection I have started working on the next step which is determining where the line is relative to the camera. Currently it is able to find if a line is vertical or horizontal with an error of less than 3 degrees. This is important because our original implementation of the aircraft was planned to fly to one side of the boundary line, and search for objects once it reached the distant end of the arena. 
+Currently progress is in full swing for the autonomous portion of the helicopter. It is the largest portion that is still unfinished for the project, with everything else being minor adjustments once the helicopter is operational. I have elected to begin with the corner detection algorithm as I suspected that it would be the most challenging portion of the program. Currently we can consistently determine whether the camera is looking at a line or a corner. While I do not have specific numbers on the accuracy it has proved to be accurate enough for our purposes. In addition to the line detection I have started working on the next step which is determining where the line is relative to the camera. Currently it is able to find if a line is vertical or horizontal with an error of less than 3 degrees. This is important because our original implementation of the aircraft was planned to fly to one side of the boundary line, and search for objects once it reached the distant end of the arena.
 
-Flight controls via autonomous methods have also been implemented. This was a major hurdle that we were stuck on for several weeks. Because our programming languages did not match up between the on-board system and out image recognition logic we needed to find an alternative solution. Rather than sending flight commands to the helicopter directly we instead are using the web-page used for manual control as a bridge between the two systems. The autonomous system simulates keyboard presses to the web-browser which in turn forwards those to the python code running on-board our helicopter. On Linux this was accomplished using xdotool. 
+Flight controls via autonomous methods have also been implemented. This was a major hurdle that we were stuck on for several weeks. Because our programming languages did not match up between the on-board system and out image recognition logic we needed to find an alternative solution. Rather than sending flight commands to the helicopter directly we instead are using the web-page used for manual control as a bridge between the two systems. The autonomous system simulates keyboard presses to the web-browser which in turn forwards those to the python code running on-board our helicopter. On Linux this was accomplished using xdotool.
 
 \subsection{Future Goals}
 
-Our future goals are narrowing down, as the code-cutoff is only two weeks away. The remaining logic needs to be implemented into the autonomous program. This includes our seeking algorithm for individual targets. At the current point in time I have been focusing on the boundary lines and making sure our aircraft stays within the confines of the arena. Additionally we should be prepared to assist the Electrical and Mechanical team in any shortcoming they may have with the aircraft during the weeks leading up to expo. Any autonomous flight controls will have limited time to test and verify that they are working correctly at this point in time, so our primary focus should be set on getting the aircraft airborne and having stable manual control. 
+Our future goals are narrowing down, as the code-cutoff is only two weeks away. The remaining logic needs to be implemented into the autonomous program. This includes our seeking algorithm for individual targets. At the current point in time I have been focusing on the boundary lines and making sure our aircraft stays within the confines of the arena. Additionally we should be prepared to assist the Electrical and Mechanical team in any shortcoming they may have with the aircraft during the weeks leading up to expo. Any autonomous flight controls will have limited time to test and verify that they are working correctly at this point in time, so our primary focus should be set on getting the aircraft airborne and having stable manual control.
 
 \subsection{Problems}
 
-At the beginning of this term we suffered a huge setback with our motors. The motors we were originally using were from a hobby helicopter that used much less power. As we added on more weight to the aircraft we needed to compensate by increasing the power running the motors. The weak motors from the hobby aircraft could not support the power we were trying to run and failed. During spring break we elected to redesign our motor system, however the motors were delayed and didn’t arrive until week 2 of spring term. Now, at week 5 we are still trying to get those motors properly installed, wired, and balanced on the aircraft. From a CS perspective we can continue writing code, however we have no way to test if our code is properly working. 
+At the beginning of this term we suffered a huge setback with our motors. The motors we were originally using were from a hobby helicopter that used much less power. As we added on more weight to the aircraft we needed to compensate by increasing the power running the motors. The weak motors from the hobby aircraft could not support the power we were trying to run and failed. During spring break we elected to redesign our motor system, however the motors were delayed and didn’t arrive until week 2 of spring term. Now, at week 5 we are still trying to get those motors properly installed, wired, and balanced on the aircraft. From a CS perspective we can continue writing code, however we have no way to test if our code is properly working.
 
 \subsection{Solutions}
 
-A unique solution I found this term revolves around the autonomous system implementation. I began with the most difficult portion of the system which was determining corners from lines from an unordered set of points. To solve this I started by taking the slope from each point to every other point. In the case of a line, these slopes should be nearly identical, and in a corner they will not be. But just using an average of slopes wasn’t accurate enough, so I then calculated the standard deviation of all of the slopes, and compared that to an established threshold. If it was above the threshold it had a high deviation and was a corner. This method of calculation allowed me to become very accurate in determining lines and corners during testing. 
+A unique solution I found this term revolves around the autonomous system implementation. I began with the most difficult portion of the system which was determining corners from lines from an unordered set of points. To solve this I started by taking the slope from each point to every other point. In the case of a line, these slopes should be nearly identical, and in a corner they will not be. But just using an average of slopes wasn’t accurate enough, so I then calculated the standard deviation of all of the slopes, and compared that to an established threshold. If it was above the threshold it had a high deviation and was a corner. This method of calculation allowed me to become very accurate in determining lines and corners during testing.
 
-Our team’s solution to the under-powered motors was to implement bigger, better motors this term. However the time it has taken to get those installed has caused more problems than solutions. If our helicopter was re-assembled this week, it would still take additional time to balance, test/trim the motors, and to fine-tune the autonomous system. It is unlikely that we will have significant time to fine tune our autonomous system prior to expo. However, we have already met most of our requirements for this project. Our last outstanding project requirement is a takeoff, hover, and land autonomously which can be easily tested once the aircraft is reassembled. 
+Our team’s solution to the under-powered motors was to implement bigger, better motors this term. However the time it has taken to get those installed has caused more problems than solutions. If our helicopter was re-assembled this week, it would still take additional time to balance, test/trim the motors, and to fine-tune the autonomous system. It is unlikely that we will have significant time to fine tune our autonomous system prior to expo. However, we have already met most of our requirements for this project. Our last outstanding project requirement is a takeoff, hover, and land autonomously which can be easily tested once the aircraft is reassembled.
 
 
 
@@ -153,12 +153,28 @@ Our team’s solution to the under-powered motors was to implement bigger, bette
 
 \subsection{Current Progress}
 
+Last term our team have finished remote control platform and flew the micro-vehicle. In this term, our team has to wait for the new motor, and we were focusing on working on the autonomous part of the software. We are trying to test the new engine and find the boundary of the code. Because we have examined the helicopter at the last term, so we have some previous system of the earlier semester to help us to test the helicopter quicker. I have been working on the python extension library as well as the last term I have been assigned. In the first few weeks, our team was still working on having to send data and communicate the code from c++ to python.
+
+I have learned more about the python extension library, not only able to send data from one file to the other but also able to send data from one file to current file correctly and use them. However, I also find out the limitation of the code. There is one of the largest influence is that it takes more time and more space if the system needs to send more data and information. And also the calculation or compilation of the code cannot have too many abilities. Because of the same reason of the limitation, it makes sending data and information from the autonomous system what we already build become an obstacle. The autonomous code we had developed will need lots of time to calculate.
+
+
 \subsection{Future Goals}
+
+Our project is due in two weeks, and we are going to present our product the micro-helicopter in Engineering explores. And we are going to focus more and work more on the micro-helicopter control and autonomous software.
+
+We are currently working on the recognizing the boundary of the field. Justin is using linear and corner to find out the ground boundary which is also the part I am focused on too.
+
+Our team is going to test more about the actual driving and the balance of the micro-helicopter. The autonomous testing and the control of the driving are separated at this moment. In week 6 and week 7, our goal of the project is going to combine these two functions before the deadline.
 
 \subsection{Problems}
 
+The longest problem has occurred in our project is that past data from C++ to python and the control platform. This problem has been discovered from the last term and last until the first few weeks of the spring term. Our motor has been burned at winter term, because of they cannot work for the time we have planed which is around ten minutes. We have done more research and found other larger propulsion engine. We ordered the new bands immediately; however, the shipment of the company take more than three weeks to deliver. Our team lost the change to enter the competition. And the new motors have not been using yet. A testing of new motor will be a problem because of the deadline.
+
 \subsection{Solutions}
 
+The solution for connection between two languages is found by using the connection between the other two languages of the code. It is changing from sending data from c++ to python to sending data and information from c++ to HTML platform. And it takes less time and space to convert data from the other two languages.
+
+On the autonomous develop side, our team has been trying to combine the control of driving and autonomous control of the micro-helicopter. 
 
 
 
@@ -183,7 +199,7 @@ A big problem has impeded our CS develop team is interfacing the C++ autonomous 
 
 \subsection{Solutions}
 
-Our team has widened the vision, we found interfacing Python and C++ is complex. We changed the idea to tackle the connection between C++ to HTML and the problem was solved. 
+Our team has widened the vision, we found interfacing Python and C++ is complex. We changed the idea to tackle the connection between C++ to HTML and the problem was solved.
 
 With the limit time remaining, we are going to get more tests at following weeks when the helicopter being reassembled. Preparing and delivering a fully manual controlled helicopter at the expo.
 
