@@ -139,6 +139,8 @@ Our future goals are narrowing down, as the code-cutoff is only two weeks away. 
 
 At the beginning of this term we suffered a huge setback with our motors. The motors we were originally using were from a hobby helicopter that used much less power. As we added on more weight to the aircraft we needed to compensate by increasing the power running the motors. The weak motors from the hobby aircraft could not support the power we were trying to run and failed. During spring break we elected to redesign our motor system, however the motors were delayed and didn’t arrive until week 2 of spring term. Now, at week 5 we are still trying to get those motors properly installed, wired, and balanced on the aircraft. From a CS perspective we can continue writing code, however we have no way to test if our code is properly working.
 
+Another problem encountered this term was how to implement the autonomous detection for corners. Being able to stay within the boundary lines is arguably one of the most important obstacles for this project. Our solution to this issue has been outlined below in my solutions section. While computationally it is costly to implement the detection for corners, the additional processing capabilities of a base-station allow us to run this calculation in parallel with the image recognition program. This means we don't have to sacrifice framerate for our autonomous capabilities. 
+
 \subsection{Solutions}
 
 A unique solution I found this term revolves around the autonomous system implementation. I began with the most difficult portion of the system which was determining corners from lines from an unordered set of points. To solve this I started by taking the slope from each point to every other point. In the case of a line, these slopes should be nearly identical, and in a corner they will not be. But just using an average of slopes wasn’t accurate enough, so I then calculated the standard deviation of all of the slopes, and compared that to an established threshold. If it was above the threshold it had a high deviation and was a corner. This method of calculation allowed me to become very accurate in determining lines and corners during testing.
@@ -205,6 +207,7 @@ With the limit time remaining, we are going to get more tests at following weeks
 
 \section{Conclusion}
 
+Our team's work has been hampered this term for a variety of reasons. The delay in getting new motors at the beginning of the term in addition to re-building the helicopter has been a major setback on some of our project requirements. While the autonomous control code is making great progress, it is likely we will not have the opportunity to test our code on a working platform. Moving forward for next year's team it will be important to emphasize the Computer Science team's needs in addition to the Electrical and Mechanical engineering teams. Testing for the flight system should have begun months ago, as the autonomous system relies heavily on the manual flight controls being functional and stable. 
 
 
 
