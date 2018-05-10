@@ -398,9 +398,7 @@ void Calculations(){
 		Summ2 = 0;
 		m2Avg = 0;
 		div2 = 0;
-		slopes.clear();
 		slopesDev.clear();
-		slopes2.clear();
 		slopes2Dev.clear();
 		
 		//End corner detection*************************************************************
@@ -474,9 +472,33 @@ void Calculations(){
 					}
 					
 				}else{ //The line isn't vertical or hoz....
+					mAvg = 0;
+					m2Avg = 0;
+					std::sort (slopes.begin(), slopes.end());		//Sort them. 
+					std::sort (slopes2.begin(), slopes2.end());
+					for( int r = 0; r < slopes.size(); r++){		//Both are the same size
+						if(slopes.at(r) < 25){						//Eliminate extremes. 
+							mAvg = mAvg + slopes.at(r);				//Find the average slope
+							div++;
+						}
+						if(slopes2.at(r) < 25){						//Eliminate extremes.
+							m2Avg = m2Avg + slopes2.at(r);
+							div2++;
+						}
+					}
+					mAvg = (mAvg / div);
+					m2Avg = (m2Avg / div2);							//These are the average slopes. 
+					div = 0;
+					div2 = 0;
+					//cout << "slope: " << mAvg << " Inverse: " << m2Avg << endl;
+					//If mAvg > m2Avg = near vertical
+					//If mAvg < m2Avg = near horz
+					//If they are close, X, / or \  (y=x) 
+					// Now we have the slope, we need to check 2 points for quadrants.
 					
 					
-				}
+					
+				}//End lines.***********
 				
 				
 			}else{				//Else it's a corner, which way do we turn?
@@ -485,23 +507,31 @@ void Calculations(){
 				
 				
 			}
-			Summ = 0;
 			LineCounter.clear();
 			xLine.clear();
 			yLine.clear();
+			slopes.clear();
+			slopes2.clear();
 		}
 		
 		
 		
-		vYellow.clear();   //Clear the points
+		
+
+		slopes.clear();		//reset for the next cycle.
+		slopes2.clear();
+		vYellow.clear(); 
 		vRed.clear();
 		vBlack.clear();	
+		div = 0, div2 = 0;
+		mAvg = 0, m2Avg = 0;
+		Summ = 0, Summ2 = 0;
 		
 		forward = 0, backward = 0;   //Clear flight input trackers
 		right = 0, left = 0;
 		up = 0, down = 0;		
 		
-	} //End While Loop****************************************************************
+	} //End While(autonomous) Loop****************************************************************
 	
 	threadded = true;	//Reset before closing the thread. 
 }
