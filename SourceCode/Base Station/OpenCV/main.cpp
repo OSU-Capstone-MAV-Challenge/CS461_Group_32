@@ -296,8 +296,8 @@ void Calculations(){
 	vector<objective> vBlack;
 	
 	int x = 0, y = 0, div = 0;		//Various int's used for calculation
-	int YelloSize = 0, div2 = 0;
-	float m = 0, mAvg = 0, Summ = 0;
+	int YelloSize = 0, div2 = 0;		//this set is used interchangably, and may have
+	float m = 0, mAvg = 0, Summ = 0;		//different purposes in each section. 
 	float m2 = 0, m2Avg = 0, Summ2 = 0;
 	
 	int forward = 0, backward = 0;   //Flight input trackers
@@ -312,7 +312,10 @@ void Calculations(){
 	vector<int> xLine;			//Used to store x & y values of vYellow for easy sorting
 	vector<int> yLine;
 	
-	while(Autonomous){
+	
+	//Begin Autonomous code: *******************************************************
+	
+	while(Autonomous){		//While autonomous mode is enabled:
 	//sleep(1);
 		pthread_mutex_lock(&lock);		//Wait for the main thread to unlock the value
 		vYellow = vborders;				//Store our values in manipulatable vectors
@@ -424,10 +427,55 @@ void Calculations(){
 				}
 				std::sort(xLine.begin(), xLine.end());
 				std::sort(yLine.begin(), yLine.end());
+				
 				if(xLine.at(xLine.size()-1)-25 <= xLine.at(0)){		//Is the line vertical?
-					cout << "Vertical" << endl;
+					//cout << "Vertical" << endl;
+					for(int i = 0; i < xLine.size();i++){			//Take the average
+							Summ2 = Summ2 + xLine.at(i);			//Max X = 640
+					}												//Half X = 320
+					mAvg = (Summ2 / (xLine.size()));
+					if( 270 <= mAvg && mAvg <= 370){							//If it's somewhere near center
+						if(mAvg >= 320){
+							left++;										//If it's slightly right, turn left (away).
+							forward++;
+						}else if(mAvg < 320){
+							right++;								//If it's slightly left, turn right (away).
+							forward++;
+						}
+					}else if(mAvg > 370){									//If it's on the far right
+						//cout << "Right side" << endl;
+						forward++;
+					}else if(mAvg < 270){									//If it's on the far left
+						//cout << "Left side" << endl;
+						forward++;
+					}
+					
 				}else if(yLine.at(yLine.size()-1)-25 <= yLine.at(0)){	//Is it horizontal?
-					cout << "Horizontal" << endl;
+					//cout << "Horizontal" << endl;
+					for(int i = 0; i < yLine.size();i++){
+							Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
+					}												//Half Y = 240
+					mAvg = (Summ2 / (yLine.size()));
+					//cout << "Hoz: " << mAvg << endl;
+					if( 190 <= mAvg && mAvg <= 290){			//If this line is near the center				
+						if(mAvg >= 240){
+							left++;								//Behind. Left and forward		
+							forward++;
+						}else if(mAvg < 240){
+							right++;							//In front. Right and back. 	
+							backward++;
+						}
+					}else if(mAvg > 290){						//Line is to the rear.	
+						//cout << "Right side" << endl;
+						left++;									//turn an arbitrary direction
+					}else if(mAvg < 190){						//Line is in front of me.			
+						//cout << "Left side" << endl;			//Directions are opposite to avoid extreme spins.
+						right++;								//turn an arbitrary direction
+					}
+					
+				}else{ //The line isn't vertical or hoz....
+					
+					
 				}
 				
 				
@@ -444,14 +492,18 @@ void Calculations(){
 		}
 		
 		
+		
 		vYellow.clear();   //Clear the points
 		vRed.clear();
-		vBlack.clear();
-	}
+		vBlack.clear();	
+		
+		forward = 0, backward = 0;   //Clear flight input trackers
+		right = 0, left = 0;
+		up = 0, down = 0;		
+		
+	} //End While Loop****************************************************************
 	
-	threadded = true;
-	
-	
+	threadded = true;	//Reset before closing the thread. 
 }
 
 
@@ -570,14 +622,15 @@ int main(int argc, char* argv[])
 		vlandings.clear();
 		
 		
-		if(threadded){
-			if(Autonomous){
+		if(threadded){			//Make sure one isn't running already
+			if(Autonomous){			//Start thread
 				std::thread Robotic (Calculations);
 				Robotic.detach();
-				threadded = 0;
+				threadded = 0;			//Mark as running
 			}
 		}
-		if(Kill){
+		
+		if(Kill){		//Killswitch implelemtation
 			xdo_t *xdo = xdo_new(NULL);
   			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "P", 0);
 			killcount++;
