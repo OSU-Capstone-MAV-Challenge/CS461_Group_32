@@ -7,7 +7,7 @@
 
 3.  Unzip the folder, and copy all the files from folder to formatted SD card.
 
-4.  Connect Pi Zero W to HMDI useable monitor, mouse and keyoboard.
+4.  Connect Pi Zero W to HMDI useable monitor, mouse and keyboard.
 
 5.  Power up the Pi Zero W, the board boot itself, the monitor show progression.
     Note : It takes about 2 mins to set up.
