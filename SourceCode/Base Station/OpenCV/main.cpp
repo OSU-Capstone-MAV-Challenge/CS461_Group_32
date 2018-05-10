@@ -39,9 +39,10 @@ int Bordertoggle = 0;
 int Delivtoggle = 0;
 int Blacktoggle = 0;
 int Kill = 0;
-int Autonomous = 0;
+int Autonomous = 1;
 int Cali = 0;
 int setter = 1;
+bool threadded = true;
 vector <objective> vborders;
 vector <objective> vlandings;
 vector <objective> vpickups;
@@ -311,7 +312,7 @@ void Calculations(){
 	vector<int> xLine;			//Used to store x & y values of vYellow for easy sorting
 	vector<int> yLine;
 	
-	while(1){
+	while(Autonomous){
 	//sleep(1);
 		pthread_mutex_lock(&lock);		//Wait for the main thread to unlock the value
 		vYellow = vborders;				//Store our values in manipulatable vectors
@@ -326,76 +327,69 @@ void Calculations(){
 		if(YelloSize >= 2){
 			for(int i = 0; i < YelloSize; i++){
 				for(int k = 0; k < YelloSize; k++){
-					if( i != k){
-						x = abs(vYellow.at(i).getxPos() - vYellow.at(k).getxPos());
-						y = abs(vYellow.at(i).getyPos() - vYellow.at(k).getyPos());
+					if( i != k){           
+						x = abs(vYellow.at(i).getxPos() - vYellow.at(k).getxPos());   //x1 - x2
+						y = abs(vYellow.at(i).getyPos() - vYellow.at(k).getyPos());   // y1 - y2
 					}
 					if( x == 0){
-						m = 0;
+						m = 0;				//Dividing by zero
 					}else if(y == 0){
-						m2=0;
+						m2=0;				//Dividing by zero again	
 					}else{
-						m = abs((float)y / (float)x);
-						m2 = abs((float)x / (float)y);
+						m = abs((float)y / (float)x);			//   y/x normal slope
+						m2 = abs((float)x / (float)y);			//	x/y inverse slope
 					}	
 				mAvg = mAvg + m;
-				m2Avg = m2Avg + m2;
-				div++;
+				m2Avg = m2Avg + m2;							//Take the average
+				div++;										//divisor for later
 				}
 				mAvg = mAvg / div; 
 				slopes.push_back(mAvg);
-				m2Avg = m2Avg / div; 
-				slopes2.push_back(m2Avg);
+				m2Avg = m2Avg / div; 						//Here we find the average and store it
+				slopes2.push_back(m2Avg);					//We want the average of every point!
 				mAvg = 0;
 				m2Avg =0;
 				div = 0;
 			}			
-			std::sort (slopes.begin(), slopes.end());
-			for( int r = 0; r < slopes.size(); r++){
-				if(slopes.at(r) < 25){
-					mAvg = mAvg + slopes.at(r);
+			std::sort (slopes.begin(), slopes.end());		//Sort them. 
+			std::sort (slopes2.begin(), slopes2.end());
+			for( int r = 0; r < slopes.size(); r++){		//Both are the same size
+				if(slopes.at(r) < 25){						//Eliminate extremes. 
+					mAvg = mAvg + slopes.at(r);				//Find the average slope
 					div++;
 				}
-				if(slopes2.at(r) < 25){
+				if(slopes2.at(r) < 25){						//Eliminate extremes.
 					m2Avg = m2Avg + slopes2.at(r);
 					div2++;
 				}
 			}
 			mAvg = (mAvg / div);
-			m2Avg = (m2Avg / div2);
+			m2Avg = (m2Avg / div2);							//These are the average slopes. 
 			div = 0;
 			div2 = 0;
-			for( int r = 0; r < slopes.size(); r++){	//Calculating standard deviation
+			for( int r = 0; r < slopes.size(); r++){			//Calculating standard deviation
 				slopesDev.push_back(mAvg - slopes.at(r));
 				slopesDev.at(r) = slopesDev.at(r) * slopesDev.at(r);
 				Summ = Summ + slopesDev.at(r);
 			}
-			for( int r = 0; r < slopes2.size(); r++){
+			for( int r = 0; r < slopes2.size(); r++){				//Again for inverse
 				slopes2Dev.push_back(m2Avg - slopes2.at(r));
 				slopes2Dev.at(r) = slopes2Dev.at(r) * slopes2Dev.at(r);
 				Summ2 = Summ2 + slopes2Dev.at(r);
 			}
-			Summ = Summ / (slopesDev.size());
+			Summ = Summ / (slopesDev.size());						//Last step	
 			Summ2 = Summ2 / (slopes2Dev.size());
-			float StdDev = sqrt (Summ);
+			float StdDev = sqrt (Summ);								//Deviations
 			float StdDev2 = sqrt (Summ2);
-			//cout << "Standard Deviation!! : " << StdDev << " : " << StdDev2 << endl;	
 			
 			if(StdDev > (.2) && StdDev2 > (.2)){  //is corner?
-				LineCounter.push_back(0);
-				//xdo_t *xdo = xdo_new(NULL);
-  				//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
-				
-			
+				LineCounter.push_back(0);		
 			}
 			if(StdDev < (.2) || StdDev2 < (.2)){	//is line?
 				LineCounter.push_back(1);
-				//xdo_t *xdo = xdo_new(NULL);
-  				//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
 			}
 		}
-		//Clear the used variables for next cycle. 
-		Summ = 0;
+		Summ = 0;  			//Clear the used variables for next cycle. 
 		mAvg = 0;
 		div = 0;
 		Summ2 = 0;
@@ -406,7 +400,14 @@ void Calculations(){
 		slopes2.clear();
 		slopes2Dev.clear();
 		
-		//End corner detection
+		//End corner detection*************************************************************
+		
+		
+		//xdo_t *xdo = xdo_new(NULL);
+  		//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+		
+		
+		
 		//If line vs corner flight commands
 		
 		if(LineCounter.size() >= 100){
@@ -448,7 +449,7 @@ void Calculations(){
 		vBlack.clear();
 	}
 	
-
+	threadded = true;
 	
 	
 }
@@ -470,12 +471,8 @@ int main(int argc, char* argv[])
 	//if we would like to calibrate our filter values, set to true.
 	bool calibrationMode = false;
 	bool webcammode = true;
-	bool threadded = true;
-	
-	if(threadded){
-		std::thread Robotic (Calculations);
-		Robotic.detach();
-	}
+	threadded = true;
+	int killcount = 0;
 	
 	//Matrix to store each frame of the webcam feed
 	Mat cameraFeed;
@@ -526,8 +523,11 @@ int main(int argc, char* argv[])
 			objective delivery("Delivery");
 			objective landing("L.Z.");
 			
-			//Implement searching block code here. 
-		pthread_mutex_lock(&lock);
+		//Implement searching block code here. 
+		
+		pthread_mutex_lock(&lock);		//Lock our vectors from the autonomous code
+		
+		//Yellow search
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Bordertoggle == 1){	
 		inRange(HSV,Scalar(BorderH_MIN,BorderS_MIN,BorderV_MIN),Scalar(BorderH_MAX,BorderS_MAX,BorderV_MAX),threshold);
@@ -537,6 +537,7 @@ int main(int argc, char* argv[])
 		morphOps(threshold);
 		trackFilteredObject(border, threshold,HSV,cameraFeed, vborders);	
 		
+		//Red search
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Delivtoggle == 1){	
 		inRange(HSV,Scalar(DelivH_MIN,DelivS_MIN,DelivV_MIN),Scalar(DelivH_MAX,DelivS_MAX,DelivV_MAX),threshold);
@@ -546,6 +547,7 @@ int main(int argc, char* argv[])
 		morphOps(threshold);
 		trackFilteredObject(delivery, threshold,HSV,cameraFeed, vpickups);	
 		
+		//Black search
 		cvtColor(cameraFeed,HSV,COLOR_BGR2HSV);
 		if(Blacktoggle == 1){	
 		inRange(HSV,Scalar(BlH_MIN,BlS_MIN,BlV_MIN),Scalar(BlH_MAX,BlS_MAX,BlV_MAX),threshold);
@@ -554,7 +556,9 @@ int main(int argc, char* argv[])
 		}
 		morphOps(threshold);
 		trackFilteredObject(landing,threshold,HSV,cameraFeed, vlandings);	
-		pthread_mutex_unlock(&lock);
+		
+		
+		pthread_mutex_unlock(&lock); 		//unlock our vectors for autonomous
 		
 			
 		imshow(windowName,cameraFeed);
@@ -564,11 +568,29 @@ int main(int argc, char* argv[])
 		vborders.clear();
 		vpickups.clear();
 		vlandings.clear();
+		
+		
+		if(threadded){
+			if(Autonomous){
+				std::thread Robotic (Calculations);
+				Robotic.detach();
+				threadded = 0;
+			}
+		}
+		if(Kill){
+			xdo_t *xdo = xdo_new(NULL);
+  			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "P", 0);
+			killcount++;
+		}
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
 		waitKey(30);
+		
+		if(killcount > 10){
+			return 0;
+		}
 	}
-	
+		
 	return 0;
 }
 
