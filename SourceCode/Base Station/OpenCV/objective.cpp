@@ -9,8 +9,8 @@ objective::~objective(void){
 objective::objective(string name){ //Duplicate this for more objects
 	setType(name);
 	if( name == "Border" ){
-			setHSVmin(Scalar(0,151,144));
-			setHSVmax(Scalar(255,255,255));
+			setHSVmin(Scalar(0,117,033));
+			setHSVmax(Scalar(255,255,218));
 			setColor(Scalar(0,250,250));
 	}
 	if( name == "Delivery" ){

@@ -418,7 +418,7 @@ void Calculations(){
 				}
 			}
 			if(Summ >= 50){   //If it's a line, we must determine if the line is straight
-				cout << "line" << endl;
+				//cout << "line" << endl;
 				for(int i = 0; i < YelloSize; i++){
 						xLine.push_back(vYellow.at(i).getxPos());
 						yLine.push_back(vYellow.at(i).getyPos());
@@ -472,37 +472,90 @@ void Calculations(){
 					}
 					
 				}else{ //The line isn't vertical or hoz....
-					mAvg = 0;
-					m2Avg = 0;
-					std::sort (slopes.begin(), slopes.end());		//Sort them. 
-					std::sort (slopes2.begin(), slopes2.end());
-					for( int r = 0; r < slopes.size(); r++){		//Both are the same size
-						if(slopes.at(r) < 25){						//Eliminate extremes. 
-							mAvg = mAvg + slopes.at(r);				//Find the average slope
-							div++;
+					//Let's re-use the averaging above, but combine X & Y together.
+					//Summ == X, Summ2 == Y
+					Summ = 0, Summ2 = 0;
+					
+					for(int i = 0; i < xLine.size();i++){			//Take the average
+							Summ = Summ + xLine.at(i);			//Max X = 640
+					}												//Half X = 320
+					for(int i = 0; i < yLine.size();i++){
+							Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
+					}
+					Summ = (Summ / (xLine.size()));
+					Summ2 = (Summ2 / (yLine.size()));
+					
+
+					
+					if( 270 <= Summ && Summ <= 370){		//If it's somewhere near center on X
+						if(Summ >= 320){						//Near center, slightly right.
+							if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+								if(Summ2 >= 240){
+									forward++;							//Move away (near center, slightly behind).
+								}else if(Summ2 < 240){
+									backward++;							//Move away (near center, slightly in front).
+								}
+							}else if(Summ2 > 290){						//Line is near center, but behind
+								right++;								//turn towards it
+							}else if(Summ2 < 190){						//Line is near center, but in front				
+								left++;								//Turn left 
+							}
+	
+						}else if(Summ < 320){						//Near center, slightly left
+							if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+								if(Summ2 >= 240){
+									forward++;							//Move away (near center, slightly behind).
+								}else if(Summ2 < 240){
+									backward++;							//Move away (near center, slightly in front).
+								}
+							}else if(Summ2 > 290){						//Line is near center, but behind		
+								left++;									//turn left
+							}else if(Summ2 < 190){						//Line is near center, but in front				
+								right++;								//Turn right
+							}
 						}
-						if(slopes2.at(r) < 25){						//Eliminate extremes.
-							m2Avg = m2Avg + slopes2.at(r);
-							div2++;
+					}else if(Summ > 370){									//If it's on the far right X
+						//cout << "Right side" << endl;
+						if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+							if(Summ2 >= 240){
+								left++;								//Conditions for upper center on right	
+								forward++;
+							}else if(Summ2 < 240){
+								right++;							// lower center on the right. 	
+								forward++;
+							}
+						}else if(Summ2 > 290){						//Line is in the lower right	
+							right++;								//turn towards it
+						}else if(Summ2 < 190){						//Line is in the upper right			
+							left++;								//Turn left 
+						}
+					}else if(Summ < 270){					//If it's on the far left X
+						//cout << "Left side" << endl;
+						if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the left				
+							if(Summ2 >= 240){
+								right++;								//Conditions for upper center on left	
+								forward++;
+							}else if(Summ2 < 240){
+								left++;							// lower center on the left. 	
+								forward++;
+							}
+						}else if(Summ2 > 290){						//Line is in the lower left	
+							left++;									//turn towards it
+						}else if(Summ2 < 190){						//Line is in the upper left			
+							right++;								//Turn right 
 						}
 					}
-					mAvg = (mAvg / div);
-					m2Avg = (m2Avg / div2);							//These are the average slopes. 
-					div = 0;
-					div2 = 0;
-					//cout << "slope: " << mAvg << " Inverse: " << m2Avg << endl;
-					//If mAvg > m2Avg = near vertical
-					//If mAvg < m2Avg = near horz
-					//If they are close, X, / or \  (y=x) 
-					// Now we have the slope, we need to check 2 points for quadrants.
 					
+					//Quick cleanup
+					Summ = 0, Summ2 = 0;
+					mAvg = 0, m2Avg = 0;
 					
 					
 				}//End lines.***********
 				
 				
 			}else{				//Else it's a corner, which way do we turn?
-				cout << "corner" << endl;
+				//cout << "corner" << endl;
 				
 				
 				
@@ -517,7 +570,28 @@ void Calculations(){
 		
 		
 		
-
+		if(forward > 0){
+			cout << "Forward" << endl;
+		}
+		if(backward > 0){
+			cout << "Backward" << endl;
+		}
+		if(left > 0){
+			cout << "Left" << endl;
+		}
+		if(right > 0){
+			cout << "Right" << endl;
+		}
+		if(up > 0){
+			cout << "Up" << endl;
+		}
+		if(down > 0){
+			cout << "Down" << endl;
+		}
+		
+		
+		
+		
 		slopes.clear();		//reset for the next cycle.
 		slopes2.clear();
 		vYellow.clear(); 
@@ -551,7 +625,7 @@ void Calculations(){
 int main(int argc, char* argv[])
 {
 	//if we would like to calibrate our filter values, set to true.
-	bool calibrationMode = false;
+	bool calibrationMode = true;
 	bool webcammode = true;
 	threadded = true;
 	int killcount = 0;
@@ -595,10 +669,10 @@ int main(int argc, char* argv[])
 			morphOps(threshold);
 			imshow(windowName2,threshold);
 			trackFilteredObject(threshold,HSV,cameraFeed);
-		}else if(Cali == 1 && calibrationMode == false){
+		}else if(Cali == 1 && calibrationMode == true){
 			destroyWindow(trackbarWindowName);
 			destroyWindow(windowName2);
-			calibrationMode = true;
+			calibrationMode = false;
 		}
 		
 			objective border("Border");	// Declare new objects here;
