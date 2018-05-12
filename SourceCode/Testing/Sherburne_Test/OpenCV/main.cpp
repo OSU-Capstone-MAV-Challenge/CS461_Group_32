@@ -296,7 +296,7 @@ void Calculations(){
 	vector<objective> vBlack;
 	
 	int x = 0, y = 0, div = 0;		//Various int's used for calculation
-	int YelloSize = 0, div2 = 0;		//this set is used interchangably, and may have
+	int div2 = 0, iteration =0;		//this set is used interchangably, and may have
 	float m = 0, mAvg = 0, Summ = 0;		//different purposes in each section. 
 	float m2 = 0, m2Avg = 0, Summ2 = 0;
 	
@@ -309,6 +309,10 @@ void Calculations(){
 	vector<float> slopesDev;	//Deviations
 	vector<float> slopes2Dev;
 	vector<bool> LineCounter; 	// This will store 1 for line, 0 for corner
+	vector<int> RedXcounter;
+	vector<int> RedYcounter;
+	vector<int> BlackXcounter;
+	vector<int> BlackYcounter;
 	vector<int> xLine;			//Used to store x & y values of vYellow for easy sorting
 	vector<int> yLine;
 	
@@ -326,10 +330,9 @@ void Calculations(){
 		
 		
 		//Begin corner calculations.
-		YelloSize = vYellow.size();			
-		if(YelloSize >= 2){
-			for(int i = 0; i < YelloSize; i++){
-				for(int k = 0; k < YelloSize; k++){
+		if( (vYellow.size()) >= 2){
+			for(int i = 0; i < (vYellow.size()); i++){
+				for(int k = 0; k < (vYellow.size()); k++){
 					if( i != k){           
 						x = abs(vYellow.at(i).getxPos() - vYellow.at(k).getxPos());   //x1 - x2
 						y = abs(vYellow.at(i).getyPos() - vYellow.at(k).getyPos());   // y1 - y2
@@ -391,202 +394,417 @@ void Calculations(){
 			if(StdDev < (.2) || StdDev2 < (.2)){	//is line?
 				LineCounter.push_back(1);
 			}
-		}
-		Summ = 0;  			//Clear the used variables for next cycle. 
-		mAvg = 0;
-		div = 0;
-		Summ2 = 0;
-		m2Avg = 0;
-		div2 = 0;
-		slopesDev.clear();
-		slopes2Dev.clear();
-		
-		//End corner detection*************************************************************
-		
-		
-		//xdo_t *xdo = xdo_new(NULL);
-  		//xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
-		
-		
-		
-		//If line vs corner flight commands
-		
-		if(LineCounter.size() >= 100){
-			for(int i =0; i < LineCounter.size(); i++){ // This will store 1 for line, 0 for corner
-				if(LineCounter.at(i) == 1){
-					Summ++;							//reusing for simplicity
-				}
-			}
-			if(Summ >= 50){   //If it's a line, we must determine if the line is straight
-				//cout << "line" << endl;
-				for(int i = 0; i < YelloSize; i++){
-						xLine.push_back(vYellow.at(i).getxPos());
-						yLine.push_back(vYellow.at(i).getyPos());
-				}
-				std::sort(xLine.begin(), xLine.end());
-				std::sort(yLine.begin(), yLine.end());
-				
-				if(xLine.at(xLine.size()-1)-25 <= xLine.at(0)){		//Is the line vertical?
-					//cout << "Vertical" << endl;
-					for(int i = 0; i < xLine.size();i++){			//Take the average
-							Summ2 = Summ2 + xLine.at(i);			//Max X = 640
-					}												//Half X = 320
-					mAvg = (Summ2 / (xLine.size()));
-					if( 270 <= mAvg && mAvg <= 370){							//If it's somewhere near center
-						if(mAvg >= 320){
-							left++;										//If it's slightly right, turn left (away).
-							forward++;
-						}else if(mAvg < 320){
-							right++;								//If it's slightly left, turn right (away).
-							forward++;
-						}
-					}else if(mAvg > 370){									//If it's on the far right
-						//cout << "Right side" << endl;
-						forward++;
-					}else if(mAvg < 270){									//If it's on the far left
-						//cout << "Left side" << endl;
-						forward++;
-					}
-					
-				}else if(yLine.at(yLine.size()-1)-25 <= yLine.at(0)){	//Is it horizontal?
-					//cout << "Horizontal" << endl;
-					for(int i = 0; i < yLine.size();i++){
-							Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
-					}												//Half Y = 240
-					mAvg = (Summ2 / (yLine.size()));
-					//cout << "Hoz: " << mAvg << endl;
-					if( 190 <= mAvg && mAvg <= 290){			//If this line is near the center				
-						if(mAvg >= 240){
-							left++;								//Behind. Left and forward		
-							forward++;
-						}else if(mAvg < 240){
-							right++;							//In front. Right and back. 	
-							backward++;
-						}
-					}else if(mAvg > 290){						//Line is to the rear.	
-						//cout << "Right side" << endl;
-						left++;									//turn an arbitrary direction
-					}else if(mAvg < 190){						//Line is in front of me.			
-						//cout << "Left side" << endl;			//Directions are opposite to avoid extreme spins.
-						right++;								//turn an arbitrary direction
-					}
-					
-				}else{ //The line isn't vertical or hoz....
-					//Let's re-use the averaging above, but combine X & Y together.
-					//Summ == X, Summ2 == Y
-					Summ = 0, Summ2 = 0;
-					
-					for(int i = 0; i < xLine.size();i++){			//Take the average
-							Summ = Summ + xLine.at(i);			//Max X = 640
-					}												//Half X = 320
-					for(int i = 0; i < yLine.size();i++){
-							Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
-					}
-					Summ = (Summ / (xLine.size()));
-					Summ2 = (Summ2 / (yLine.size()));
-					
 
-					
-					if( 270 <= Summ && Summ <= 370){		//If it's somewhere near center on X
-						if(Summ >= 320){						//Near center, slightly right.
+			Summ = 0;  			//Clear the used variables for next cycle. 
+			mAvg = 0;
+			div = 0;
+			Summ2 = 0;
+			m2Avg = 0;
+			div2 = 0;
+			slopesDev.clear();
+			slopes2Dev.clear();
+		
+			//End corner detection*************************************************************
+			//If line vs corner flight commands
+			if(LineCounter.size() >= 150){
+				for(int i =0; i < LineCounter.size(); i++){ // This will store 1 for line, 0 for corner
+					if(LineCounter.at(i) == 1){
+						Summ++;							//reusing for simplicity
+					}
+				}
+				if(Summ >= 50){   //If it's a line, we must determine if the line is straight
+					//cout << "line" << endl;
+					Summ = 0;
+					for(int i = 0; i < (vYellow.size()); i++){
+							xLine.push_back(vYellow.at(i).getxPos());
+							yLine.push_back(vYellow.at(i).getyPos());
+					}
+					std::sort(xLine.begin(), xLine.end());
+					std::sort(yLine.begin(), yLine.end());
+
+					if(xLine.at(xLine.size()-1)-25 <= xLine.at(0)){		//Is the line vertical?
+						//cout << "Vertical" << endl;
+						for(int i = 0; i < xLine.size();i++){			//Take the average
+								Summ2 = Summ2 + xLine.at(i);			//Max X = 640
+						}												//Half X = 320
+						mAvg = (Summ2 / (xLine.size()));
+						if( 270 <= mAvg && mAvg <= 370){							//If it's somewhere near center
+							if(mAvg >= 320){
+								left++;										//If it's slightly right, turn left (away).
+								forward++;
+							}else if(mAvg < 320){
+								right++;								//If it's slightly left, turn right (away).
+								forward++;
+							}
+						}else if(mAvg > 370){									//If it's on the far right
+							//cout << "Right side" << endl;
+							forward++;
+						}else if(mAvg < 270){									//If it's on the far left
+							//cout << "Left side" << endl;
+							forward++;
+						}
+
+					}else if(yLine.at(yLine.size()-1)-25 <= yLine.at(0)){	//Is it horizontal?
+						//cout << "Horizontal" << endl;
+						for(int i = 0; i < yLine.size();i++){
+								Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
+						}												//Half Y = 240
+						mAvg = (Summ2 / (yLine.size()));
+						//cout << "Hoz: " << mAvg << endl;
+						if( 190 <= mAvg && mAvg <= 290){			//If this line is near the center				
+							if(mAvg >= 240){
+								left++;								//Behind. Left and forward		
+								forward++;
+							}else if(mAvg < 240){
+								right++;							//In front. Right and back. 	
+								backward++;
+							}
+						}else if(mAvg > 290){						//Line is to the rear.	
+							//cout << "Right side" << endl;
+							left++;									//turn an arbitrary direction
+						}else if(mAvg < 190){						//Line is in front of me.			
+							//cout << "Left side" << endl;			//Directions are opposite to avoid extreme spins.
+							right++;								//turn an arbitrary direction
+						}
+
+					}else{ //The line isn't vertical or hoz....
+						//Let's re-use the averaging above, but combine X & Y together.
+						//Summ == X, Summ2 == Y
+						Summ = 0, Summ2 = 0;
+
+						for(int i = 0; i < xLine.size();i++){			//Take the average
+								Summ = Summ + xLine.at(i);			//Max X = 640
+						}												//Half X = 320
+						for(int i = 0; i < yLine.size();i++){
+								Summ2 = Summ2 + yLine.at(i);			//Max Y = 480
+						}
+						Summ = (Summ / (xLine.size()));
+						Summ2 = (Summ2 / (yLine.size()));
+
+
+
+						if( 270 <= Summ && Summ <= 370){		//If it's somewhere near center on X
+							if(Summ >= 320){						//Near center, slightly right.
+								if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+									if(Summ2 >= 240){
+										forward++;							//Move away (near center, slightly behind).
+									}else if(Summ2 < 240){
+										backward++;							//Move away (near center, slightly in front).
+									}
+								}else if(Summ2 > 290){						//Line is near center, but behind
+									right++;								//turn towards it
+								}else if(Summ2 < 190){						//Line is near center, but in front				
+									left++;								//Turn left 
+								}
+
+							}else if(Summ < 320){						//Near center, slightly left
+								if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+									if(Summ2 >= 240){
+										forward++;							//Move away (near center, slightly behind).
+									}else if(Summ2 < 240){
+										backward++;							//Move away (near center, slightly in front).
+									}
+								}else if(Summ2 > 290){						//Line is near center, but behind		
+									left++;									//turn left
+								}else if(Summ2 < 190){						//Line is near center, but in front				
+									right++;								//Turn right
+								}
+							}
+						}else if(Summ > 370){									//If it's on the far right X
+							//cout << "Right side" << endl;
 							if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
 								if(Summ2 >= 240){
-									forward++;							//Move away (near center, slightly behind).
+									left++;								//Conditions for upper center on right	
+									forward++;
 								}else if(Summ2 < 240){
-									backward++;							//Move away (near center, slightly in front).
+									right++;							// lower center on the right. 	
+									forward++;
 								}
-							}else if(Summ2 > 290){						//Line is near center, but behind
+							}else if(Summ2 > 290){						//Line is in the lower right	
 								right++;								//turn towards it
-							}else if(Summ2 < 190){						//Line is near center, but in front				
+							}else if(Summ2 < 190){						//Line is in the upper right			
 								left++;								//Turn left 
 							}
-	
-						}else if(Summ < 320){						//Near center, slightly left
-							if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
+						}else if(Summ < 270){					//If it's on the far left X
+							//cout << "Left side" << endl;
+							if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the left				
 								if(Summ2 >= 240){
-									forward++;							//Move away (near center, slightly behind).
+									right++;								//Conditions for upper center on left	
+									forward++;
 								}else if(Summ2 < 240){
-									backward++;							//Move away (near center, slightly in front).
+									left++;							// lower center on the left. 	
+									forward++;
 								}
-							}else if(Summ2 > 290){						//Line is near center, but behind		
-								left++;									//turn left
-							}else if(Summ2 < 190){						//Line is near center, but in front				
-								right++;								//Turn right
+							}else if(Summ2 > 290){						//Line is in the lower left	
+								left++;									//turn towards it
+							}else if(Summ2 < 190){						//Line is in the upper left			
+								right++;								//Turn right 
 							}
 						}
-					}else if(Summ > 370){									//If it's on the far right X
-						//cout << "Right side" << endl;
-						if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the right				
-							if(Summ2 >= 240){
-								left++;								//Conditions for upper center on right	
-								forward++;
-							}else if(Summ2 < 240){
-								right++;							// lower center on the right. 	
-								forward++;
-							}
-						}else if(Summ2 > 290){						//Line is in the lower right	
-							right++;								//turn towards it
-						}else if(Summ2 < 190){						//Line is in the upper right			
-							left++;								//Turn left 
-						}
-					}else if(Summ < 270){					//If it's on the far left X
-						//cout << "Left side" << endl;
-						if( 190 <= Summ2 && Summ2 <= 290){			//If this line is near the center on the left				
-							if(Summ2 >= 240){
-								right++;								//Conditions for upper center on left	
-								forward++;
-							}else if(Summ2 < 240){
-								left++;							// lower center on the left. 	
-								forward++;
-							}
-						}else if(Summ2 > 290){						//Line is in the lower left	
-							left++;									//turn towards it
-						}else if(Summ2 < 190){						//Line is in the upper left			
-							right++;								//Turn right 
-						}
+
+						//Quick cleanup
+						Summ = 0, Summ2 = 0;
+						mAvg = 0, m2Avg = 0;
+					}//End lines.***********
+
+				}else{				//Else it's a corner, which way do we turn?
+					//cout << "corner" << endl;
+					for(int i = 0; i < (vYellow.size()); i++){				//Gather the points
+							xLine.push_back(vYellow.at(i).getxPos());
+							yLine.push_back(vYellow.at(i).getyPos());
 					}
-					
-					//Quick cleanup
-					Summ = 0, Summ2 = 0;
-					mAvg = 0, m2Avg = 0;
-					
-					
-				}//End lines.***********
-				
-				
-			}else{				//Else it's a corner, which way do we turn?
-				//cout << "corner" << endl;
-				
-				
-				
+
+					//For this section we are going to use quadrants to determine where the points reside.
+					//Points shouls only reside in two or three quadrants, so we can use that to determine which 
+					//direction to turn.
+					int q1=0, q2=0, q3=0, q4=0;
+					for(int i = 0; i < xLine.size(); i++){  //X and Y are the same size.
+						if(xLine.at(i) < 320){					//Max X = 640
+							if(yLine.at(i) <= 240){				//Max Y = 480						
+								q1++;	//Top left
+							}else{
+								q3++;	//Bottom left
+							}
+						}else{
+							if(yLine.at(i) <= 240){				//Max Y = 480						
+								q2++;	//Top right
+							}else{
+								q4++;	//Bottom right
+							}
+						}						
+					}	//End point counting.
+
+				//Now our quadrants contain the number of points in each. 
+					if(q1 <= 2){   //Clean up low accuracy values.
+						q1 = 0;
+					}
+					if(q2 <= 2){
+						q2 = 0;
+					}
+					if(q3 <= 2){
+						q3 = 0;
+					}
+					if(q4 <= 2){
+						q4 = 0;
+					}	
+
+					if(q1 > 0  && q2 > 0 && q3 > 0){   //Corner across upper left
+						right++;
+						backward++;
+					}else if(q4 > 0  && q2 > 0 && q3 > 0){//Corner across lower right
+						forward++;
+					}else if(q1 > 0  && q4 > 0 && q3 > 0){//Corner across lower left
+						right++; 
+					}else if(q1 > 0  && q2 > 0 && q4 > 0){//Corner across upper right
+						left++;
+						backward++;
+
+					//Now for two-quadrant conditions.
+					}else if(q1 > 0 && q2 > 0){   //Top two
+						right++;
+						backward++;
+					}else if(q1 > 0 && q3 > 0){		//Two left
+						right++;	
+					}else if(q2 > 0 && q4 > 0){		//Two right
+						left++;
+					}else if(q3 > 0 && q4 > 0){		//tow bottom
+						right++;
+						forward++;
+					}
+
+				}
+				LineCounter.clear();
+				xLine.clear();
+				yLine.clear();
+				slopes.clear();
+				slopes2.clear();
 			}
-			LineCounter.clear();
-			xLine.clear();
-			yLine.clear();
-			slopes.clear();
-			slopes2.clear();
+		}   //End Yellow Calculations!***********
+		
+		
+		if((vRed.size()) >= 1){   //Red tolerances should be very low as we should only have one target.
+			Summ = 0, Summ2 = 0, div=0; 
+			for(int i = 0; i < (vRed.size()); i++){				//Get the average X and Y
+				Summ = Summ + (vRed.at(i).getxPos());
+				Summ2 = Summ2 + (vRed.at(i).getyPos());
+				div++;
+			}
+		Summ = Summ / div;
+		Summ = Summ2 /div;
+		RedXcounter.push_back(Summ);
+		RedYcounter.push_back(Summ2);
+		Summ = 0, Summ2 = 0, div = 0;
+			
+		if(RedXcounter.size() >= 120){		//This runs every second or so....
+			for(int i=0; i < RedXcounter.size(); i++){
+				Summ = Summ + (RedXcounter.at(i));
+				Summ2 = Summ2 + (RedYcounter.at(i));
+				div++;
+			}
+			Summ = Summ /div;
+			Summ2 = Summ2 / div;
+			//We are going to re-use some of the line calculations here. 
+				if( 260 <= Summ && Summ <= 380){		//If it's somewhere near center on X
+						if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+							down++;
+						}else if(Summ2 > 300){						//point is near center, but behind
+							backward++;								
+						}else if(Summ2 < 180){						//point is near center, but in front		
+							forward++;								
+						}
+				}else if(Summ > 380){									//If it's on the far right X
+					//cout << "Right side" << endl;
+						if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+							right++;
+						}else if(Summ2 > 300){						//point is near center, but behind
+							right++;
+							backward++;								
+						}else if(Summ2 < 180){						//point is near center, but in front		
+							right++;
+							forward++;								
+						}
+				}else if(Summ < 260){					//If it's on the far left X
+					//cout << "Left side" << endl;
+						if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+							left++;
+						}else if(Summ2 > 300){						//point is near center, but behind
+							left++;
+							backward++;								
+						}else if(Summ2 < 180){						//point is near center, but in front		
+							left++;
+							forward++;								
+						}
+				}
+			Summ = 0, Summ2 = 0, div =0;		//Cleanup
+			RedXcounter.clear();
+			RedYcounter.clear();
+			}
+		}  //End Red Calculations!**************************
+		
+		
+		if((vBlack.size()) >= 1){  //this needs to be lightweight as we will register with the line...
+			for(int i = 0; i < vBlack.size(); i++){				//Gather the points
+				xLine.push_back(vBlack.at(i).getxPos());
+				yLine.push_back(vBlack.at(i).getyPos());
+			}
+			std::sort(xLine.begin(), xLine.end());
+			std::sort(yLine.begin(), yLine.end());
+			
+			for(int i = 0; i < (xLine.size() - 1); i++){	//We need to find points with no neighbors
+				if(xLine.at(i) < xLine.at(i+1) + 10 || xLine.at(i) > xLine.at(i+1) - 10){
+					xLine.at(i) = 0;	
+					yLine.at(i) = 0;
+				}
+				if(yLine.at(i) < yLine.at(i+1) + 10 || yLine.at(i) > yLine.at(i+1) - 10){
+					xLine.at(i) = 0;	
+					yLine.at(i) = 0;
+				}
+			}
+			//Average those items.
+			for(int i = 0; i < (xLine.size()); i++){				//Get the average X and Y
+				Summ = Summ + (xLine.at(i));
+				Summ2 = Summ2 + (yLine.at(i));
+			}
+			Summ = Summ / div;
+			Summ2 = Summ2 / div;
+			BlackXcounter.push_back(Summ);
+			BlackYcounter.push_back(Summ2);
+			Summ = 0; Summ2 = 0; div = 0;
+			
+			
+			if(BlackXcounter.size() >= 120){		//This runs every second or so....
+				for(int i=0; i < BlackXcounter.size(); i++){
+					Summ = Summ + (BlackXcounter.at(i));
+					Summ2 = Summ2 + (BlackYcounter.at(i));
+					div++;
+				}
+				Summ = Summ /div;
+				Summ2 = Summ2 / div;
+			}
+			
+			//Implement the same search as Red. 
+			if( 260 <= Summ && Summ <= 380){		//If it's somewhere near center on X
+					if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+						down++;
+					}else if(Summ2 > 300){						//point is near center, but behind
+						backward++;								
+					}else if(Summ2 < 180){						//point is near center, but in front		
+						forward++;								
+					}
+			}else if(Summ > 380){									//If it's on the far right X
+				//cout << "Right side" << endl;
+					if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+						right++;
+					}else if(Summ2 > 300){						//point is near center, but behind
+						right++;
+						backward++;								
+					}else if(Summ2 < 180){						//point is near center, but in front		
+						right++;
+						forward++;								
+					}
+			}else if(Summ < 260){					//If it's on the far left X
+				//cout << "Left side" << endl;
+					if( 180 <= Summ2 && Summ2 <= 300){			//If this point is near the center				
+						left++;
+					}else if(Summ2 > 300){						//point is near center, but behind
+						left++;
+						backward++;								
+					}else if(Summ2 < 180){						//point is near center, but in front		
+						left++;
+						forward++;								
+					}
+			}
+		Summ = 0, Summ2 = 0, div =0;		//Cleanup
+		BlackXcounter.clear();
+		BlackYcounter.clear();		
+		
+		
+		 }  //End Black.
+		
+		
+		//Default functionality
+		iteration++;
+		if(up > 500){
+			iteration = 0;
+			up++;
+			forward++;
 		}
 		
-		
-		
-		
-		if(forward > 0){
+		if(forward > 15){
 			cout << "Forward" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "W", 0);
+			forward = 0;
 		}
-		if(backward > 0){
+		if(backward > 15){
 			cout << "Backward" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "S", 0);
+			backward = 0;
 		}
-		if(left > 0){
+		if(left > 15){
 			cout << "Left" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "A", 0);
+			left = 0;
 		}
-		if(right > 0){
+		if(right > 15){
 			cout << "Right" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "D", 0);
+			right = 0;
 		}
-		if(up > 0){
+		if(up > 15){
 			cout << "Up" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "Q", 0);
+			up = 0;
 		}
-		if(down > 0){
+		if(down > 15){
 			cout << "Down" << endl;
+			xdo_t *xdo = xdo_new(NULL);
+			xdo_send_keysequence_window(xdo, CURRENTWINDOW, "E", 0);
+			down = 0;
 		}
 		
 		
@@ -601,9 +819,6 @@ void Calculations(){
 		mAvg = 0, m2Avg = 0;
 		Summ = 0, Summ2 = 0;
 		
-		forward = 0, backward = 0;   //Clear flight input trackers
-		right = 0, left = 0;
-		up = 0, down = 0;		
 		
 	} //End While(autonomous) Loop****************************************************************
 	
