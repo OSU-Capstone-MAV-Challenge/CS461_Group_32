@@ -13,47 +13,67 @@
         var hasGP = false;
         var repGP;
         var funGP;
+        var allowed = true;
         function initialize() {
             return "getGamepads" in navigator;
         }
         function go(k) {
             $.post('/', { k: k }, function () { });
         }
-        $(function () {
-            window.document.onkeydown = abc
-            function abc(env) {
-                env = (env) ? env : window.event;
-                if (env.keyCode == '87') {
-                    go('w');
-                }
-                if (env.keyCode == '83') {
-                    go('s');
-                }
-                if (env.keyCode == '65') {
-                    go('a');
-                }
-                if (env.keyCode == '68') {
-                    go('d');
-                }
-                if (env.keyCode == '81') {
-                    go('q');
-                }
-                if (env.keyCode == '69') {
-                    go('e');
-                }
-                if (env.keyCode == '80') {
-                    go('p');
-                }
-                if (env.keyCode == '73') {
-                    go('i');
-                }
-                if (env.keyCode == '90') {
-                    go('z');
-                }
-                if (env.keyCode == '88') {
-                    go('x');
-                }
-            };
+        $(document).keydown(function (env) {
+            if (event.repeat != undefined) {
+                allowed = !event.repeat;
+            }
+            if (!allowed) return;
+            allowed = false;
+            if (env.keyCode == '87') {
+                go('w');
+            }
+            if (env.keyCode == '83') {
+                go('s');
+            }
+            if (env.keyCode == '65') {
+                go('a');
+            }
+            if (env.keyCode == '68') {
+                go('d');
+            }
+            if (env.keyCode == '81') {
+                go('q');
+            }
+            if (env.keyCode == '69') {
+                go('e');
+            }
+            if (env.keyCode == '80') {
+                go('p');
+            }
+            if (env.keyCode == '73') {
+                go('i');
+            }
+            if (env.keyCode == '90') {
+                go('z');
+            }
+            if (env.keyCode == '88') {
+                go('x');
+            }           
+        });
+        $(document).keyup(function (env) {
+            allowed = true;
+            if (env.keyCode == '87') {
+                go('w');
+            }
+            if (env.keyCode == '83') {
+                go('s');
+            }
+            if (env.keyCode == '65') {
+                go('a');
+            }
+            if (env.keyCode == '68') {
+                go('d');
+            }
+        });
+        $(document).focus(function (e) {
+            allowed = true;
         });
         $(document).ready(function () {
             $("#Forward").mousedown(function () {
